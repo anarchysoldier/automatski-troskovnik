@@ -3,6 +3,7 @@
   Automatski troškovnik priključka
   Radna verzija v155
   Kod organiziran radi lakšeg održavanja.
+  V177: Supabase spremanje i otvaranje troškovnika s RLS ovlastima.
   V175: Prihvaćanje uvodne napomene pamti se u pregledniku i ostaje nakon osvježavanja.
   V174: Opis priključka za SKRO i KRO uključuje obveze investitora za zgradu.
   V173: SKRO automatski dodaje ormar, polucilindar, ugradnju SKPMO i 2 m cijevi za uvlačenje.
@@ -1233,6 +1234,7 @@ html:not(.auth-approved) .wrap,html:not(.auth-approved) .preset-fab-wrap,html:no
 #auth-admin{position:fixed;inset:0;overflow:auto;z-index:30000;background:#f3f6f9;padding:24px;font-family:Inter,Arial,sans-serif}
 #auth-admin table{width:100%;border-collapse:collapse;background:white}#auth-admin td,#auth-admin th{padding:12px;border-bottom:1px solid #ddd;text-align:left}
 #auth-admin button:disabled{opacity:.35}
+#cloud-panel{position:fixed;right:12px;bottom:12px;z-index:9999;width:min(420px,calc(100vw - 24px));max-height:80vh;overflow:auto;padding:14px;background:#fff;border:1px solid #d9e1ec;border-radius:12px;box-shadow:0 4px 25px #0003;font-family:Arial,sans-serif}#cloud-panel input,#cloud-panel select{padding:9px;width:100%;box-sizing:border-box;margin:5px 0}#cloud-panel button{padding:8px 10px;margin:3px;border:0;border-radius:6px;background:#155eef;color:#fff;cursor:pointer}#cloud-panel small{display:block;color:#555;margin-top:7px}#cloud-panel .cloud-actions{display:flex;flex-wrap:wrap}#cloud-panel [hidden]{display:none!important}
 @media print{#auth-toolbar,#auth-admin,#auth-shell{display:none!important}}
 </style></head>
 <body><section id="auth-shell">
@@ -1247,6 +1249,14 @@ html:not(.auth-approved) .wrap,html:not(.auth-approved) .preset-fab-wrap,html:no
 <button id="auth-signout-wait" hidden>Odjava</button>
 </section>
 <div id="auth-toolbar" hidden><span id="auth-username"></span><button id="auth-admin-button" hidden>Administracija</button><button id="auth-signout">Odjava</button></div>
+<section id="cloud-panel" hidden>
+<strong>☁️ Moji troškovnici</strong><button id="cloud-toggle" style="float:right">Sakrij</button>
+<div id="cloud-inner"><input id="cloud-name" placeholder="Naziv / broj predmeta" maxlength="250"/>
+<div class="cloud-actions"><button id="cloud-save">Spremi novi</button><button id="cloud-update" disabled>Ažuriraj odabrani</button><button id="cloud-refresh">Osvježi popis</button></div>
+<input id="cloud-filter" placeholder="Pretraži spremljene predmete"/>
+<select id="cloud-select" size="6" aria-label="Spremljeni troškovnici"></select>
+<div class="cloud-actions"><button id="cloud-open">Otvori odabrani</button><button id="cloud-delete">Obriši odabrani</button></div>
+<small id="cloud-status" role="status">Spremanje u Supabase. Lokalni spremljeni predmeti ostaju nepromijenjeni.</small></div></section>
 <section id="auth-admin" hidden><h2>Administracija korisnika</h2><button id="auth-close-admin">Zatvori</button><button id="auth-reload-users">Osvježi</button><div id="auth-users"></div></section>
 
 <!-- ==================== APLIKACIJA ==================== -->
@@ -4503,8 +4513,8 @@ const sb=createClient('https://jegtseiwalmynkugadrr.supabase.co','sb_publishable
 const $=id=>document.getElementById(id);
 const message=text=>{$('auth-message').textContent=text};
 let currentUser=null,currentProfile=null;
-function lock(){document.documentElement.classList.remove('auth-approved');$('auth-shell').hidden=false;$('auth-toolbar').hidden=true;$('auth-admin').hidden=true}
-function unlock(){document.documentElement.classList.add('auth-approved');$('auth-shell').hidden=true;$('auth-toolbar').hidden=false;$('auth-username').textContent=currentProfile.full_name||currentUser.email;$('auth-admin-button').hidden=currentProfile.role!=='admin'}
+function lock(){document.getElementById('cloud-panel').hidden=true;document.documentElement.classList.remove('auth-approved');$('auth-shell').hidden=false;$('auth-toolbar').hidden=true;$('auth-admin').hidden=true}
+function unlock(){document.getElementById('cloud-panel').hidden=false;document.documentElement.classList.add('auth-approved');$('auth-shell').hidden=true;$('auth-toolbar').hidden=false;$('auth-username').textContent=currentProfile.full_name||currentUser.email;$('auth-admin-button').hidden=currentProfile.role!=='admin'}
 async function refreshAccess(){
   lock();
   const {data:{user},error}=await sb.auth.getUser();
@@ -4552,6 +4562,66 @@ async function loadUsers(){
 $('auth-admin-button').onclick=()=>{$('auth-admin').hidden=false;loadUsers()};
 $('auth-close-admin').onclick=()=>{$('auth-admin').hidden=true};
 $('auth-reload-users').onclick=loadUsers;
+
+// v177 - Supabase cloud projects (explicit save/update; local save remains intact)
+let cloudRows=[];
+const cloudStatus=t=>{$('cloud-status').textContent=t};
+const selectedCloud=()=>cloudRows.find(x=>x.id===$('cloud-select').value);
+function renderCloud(){
+ const selected=$('cloud-select').value;
+ const q=$('cloud-filter').value.trim().toLocaleLowerCase('hr');
+ $('cloud-select').replaceChildren();
+ for(const x of cloudRows.filter(x=>x.naziv.toLocaleLowerCase('hr').includes(q)||String(x.owner_id).includes(q))){
+  const opt=document.createElement('option');opt.value=x.id;opt.textContent=x.naziv+' · '+new Date(x.updated_at).toLocaleString('hr-HR')+(x.owner_id!==currentUser?.id?' · tuđi':'');$('cloud-select').append(opt)
+ }
+ if([...$('cloud-select').options].some(o=>o.value===selected))$('cloud-select').value=selected;
+ $('cloud-update').disabled=!selectedCloud();
+}
+async function refreshCloud(){
+ if(!currentUser||currentProfile?.status!=='approved')return;
+ cloudStatus('Učitavanje popisa...');
+ const {data,error}=await sb.from('troskovnici').select('id,owner_id,naziv,updated_at').order('updated_at',{ascending:false}).limit(500);
+ if(error){cloudStatus('Greška: '+error.message);return}
+ cloudRows=data||[];renderCloud();cloudStatus('Pronađeno: '+cloudRows.length+' (prvih 500).');
+}
+$('cloud-toggle').onclick=()=>{const hidden=$('cloud-inner').hidden;$('cloud-inner').hidden=!hidden;$('cloud-toggle').textContent=hidden?'Sakrij':'Prikaži'};
+$('cloud-filter').oninput=renderCloud;
+$('cloud-select').onchange=()=>{$('cloud-update').disabled=!selectedCloud();const x=selectedCloud();if(x)$('cloud-name').value=x.naziv};
+$('cloud-refresh').onclick=refreshCloud;
+$('cloud-save').onclick=async()=>{
+ const naziv=$('cloud-name').value.trim()||window.collectAppState?.().projectName?.trim();
+ if(!naziv){cloudStatus('Upiši naziv ili broj predmeta.');return}
+ const stanje=window.collectAppState?.();if(!stanje){cloudStatus('Stanje troškovnika nije dostupno.');return}
+ cloudStatus('Spremanje...');
+ const {data,error}=await sb.from('troskovnici').insert({naziv,owner_id:currentUser.id,stanje}).select('id').single();
+ if(error){cloudStatus('Greška: '+error.message);return}
+ await refreshCloud();$('cloud-select').value=data.id;renderCloud();cloudStatus('Troškovnik je spremljen u oblak.')
+};
+$('cloud-update').onclick=async()=>{
+ const x=selectedCloud();if(!x)return;
+ if(!confirm('Prepisati spremljeni troškovnik trenutnim stanjem?'))return;
+ const naziv=$('cloud-name').value.trim()||x.naziv;
+ const {error}=await sb.from('troskovnici').update({naziv,stanje:window.collectAppState()}).eq('id',x.id);
+ if(error){cloudStatus('Greška: '+error.message);return}
+ await refreshCloud();$('cloud-select').value=x.id;renderCloud();cloudStatus('Troškovnik je ažuriran.')
+};
+$('cloud-open').onclick=async()=>{
+ const x=selectedCloud();if(!x)return;
+ if(!confirm('Otvoriti odabrani troškovnik? Trenutni nespremljeni rad bit će zamijenjen.'))return;
+ const {data,error}=await sb.from('troskovnici').select('stanje,naziv').eq('id',x.id).single();
+ if(error){cloudStatus('Greška: '+error.message);return}
+ if(!window.applyAppState?.(data.stanje)){cloudStatus('Nije moguće učitati stanje.');return}
+ $('cloud-name').value=data.naziv;cloudStatus('Učitan: '+data.naziv)
+};
+$('cloud-delete').onclick=async()=>{
+ const x=selectedCloud();if(!x||!confirm('Trajno obrisati troškovnik '+x.naziv+' iz oblaka?'))return;
+ const {error}=await sb.from('troskovnici').delete().eq('id',x.id);
+ if(error){cloudStatus('Greška: '+error.message);return}
+ await refreshCloud();cloudStatus('Troškovnik je obrisan.')
+};
+const originalUnlock=unlock;
+unlock=()=>{originalUnlock();refreshCloud()};
+
 sb.auth.onAuthStateChange(()=>{setTimeout(refreshAccess,0)});
 await refreshAccess();
 </script></body>
