@@ -1386,6 +1386,29 @@ html:not(.auth-approved) body{background:linear-gradient(135deg,#eaf1fb 0%,#f8fa
 #auth-toolbar .auth-menu-divider{border-top:1px solid #e9eef4;margin:4px 0}
 #auth-toolbar #auth-signout{color:#b24545!important;background:transparent}
 #auth-toolbar #auth-signout:hover{background:#fff0f0}
+</style><style>
+/* v188: korisnička ikona u samom gornjem desnom kutu, stil donjih alatnih ikona */
+#auth-toolbar{position:fixed!important;top:24px!important;right:24px!important;left:auto!important;bottom:auto!important;z-index:10020!important;width:58px!important;height:58px!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important}
+#auth-toolbar #auth-profile-toggle{display:flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;padding:0!important;margin:0!important;border-radius:12px!important;background:#fff!important;color:#0b1f44!important;border:1px solid #cfd8e3!important;box-shadow:0 10px 28px rgba(11,31,68,.18)!important;cursor:pointer!important}
+#auth-toolbar #auth-profile-toggle:hover,#auth-toolbar #auth-profile-toggle[aria-expanded="true"]{background:#edf4fb!important;border-color:#a9c2dd!important}
+#auth-toolbar #auth-profile-menu{right:0!important;top:calc(100% + 10px)!important}
+@media(max-width:620px){#auth-toolbar{top:14px!important;right:14px!important;width:52px!important;height:52px!important}#auth-toolbar #auth-profile-toggle{width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important}}
+@media print{#auth-toolbar{display:none!important}}
+#auth-login-card .auth-remember{display:flex;align-items:center;gap:10px;margin:15px 0 18px;font-size:13px;font-weight:600;color:#36516b;cursor:pointer}
+#auth-login-card .auth-remember input{width:17px;height:17px;accent-color:#245e91;cursor:pointer;margin:0;flex:none}
+</style><style>
+/* v190 — zaseban, siguran obrazac za obnovu lozinke */
+#recovery-screen[hidden]{display:none!important}
+#recovery-screen{position:fixed;inset:0;z-index:40000;display:grid;place-items:center;padding:18px;background:#f3f6fb;font-family:Inter,Arial,sans-serif}
+#recovery-screen .recovery-card{width:min(450px,100%);padding:30px;background:white;border:1px solid #dce5f0;border-radius:18px;box-shadow:0 22px 65px #10284024}
+#recovery-screen h2{margin:0 0 8px;color:#17365d;font-size:22px}
+#recovery-screen p{font-size:13px;line-height:1.6;color:#53657a}
+#recovery-screen label{display:block;font-size:12px;font-weight:700;margin:17px 0 7px;color:#34475d}
+#recovery-screen input{display:block;width:100%;min-height:44px;border:1px solid #cbd5e1;border-radius:10px;padding:11px;font-size:14px}
+#recovery-screen button{width:100%;margin-top:18px;background:#215d94;color:white;min-height:44px}
+#recovery-screen button:disabled{opacity:.6;cursor:wait}
+#recovery-status{min-height:20px}
+@media print{#recovery-screen{display:none!important}}
 </style></head>
 <body><div id="auth-loading" role="status" style="position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#f6f8fb;color:#334155;font:16px Arial,sans-serif">Provjera prijave…</div><section id="auth-shell" hidden>
 <div class="auth-hero"><div class="auth-brand"><span class="auth-brand-mark">⚡</span><div><h2>Automatski troškovnik</h2><p>Siguran pristup sustavu za izradu troškovnika</p></div></div></div>
@@ -1399,6 +1422,7 @@ html:not(.auth-approved) body{background:linear-gradient(135deg,#eaf1fb 0%,#f8fa
 <input id="auth-email" type="email" placeholder="E-mail adresa" autocomplete="email">
 <label class="auth-label" for="auth-password">Lozinka</label>
 <input id="auth-password" type="password" placeholder="Lozinka" autocomplete="current-password">
+<label class="auth-remember"><input id="auth-remember" type="checkbox" checked><span>Zapamti me</span></label>
 <button id="auth-login" class="auth-primary">Prijavi se</button>
 <button id="auth-forgot" class="auth-link">Zaboravljena lozinka?</button>
 </div>
@@ -1418,6 +1442,22 @@ html:not(.auth-approved) body{background:linear-gradient(135deg,#eaf1fb 0%,#f8fa
 </section>
 
 
+
+<section id="recovery-screen" hidden aria-labelledby="recovery-title">
+ <div class="recovery-card">
+  <h2 id="recovery-title">Postavljanje nove lozinke</h2>
+  <p>Unesite novu lozinku za svoj korisnički račun.</p>
+  <form id="recovery-form">
+   <label for="recovery-new">Nova lozinka</label>
+   <input id="recovery-new" type="password" minlength="8" autocomplete="new-password" required>
+   <label for="recovery-repeat">Potvrdite novu lozinku</label>
+   <input id="recovery-repeat" type="password" minlength="8" autocomplete="new-password" required>
+   <button id="recovery-submit" type="submit">Spremi novu lozinku</button>
+  </form>
+  <p id="recovery-status" role="status"></p>
+  <button id="recovery-back" type="button" hidden>Vrati se na prijavu</button>
+ </div>
+</section>
 <section id="email-result" hidden aria-live="polite"><div class="result-card"><div class="result-icon">✓</div><h2 id="email-result-title">E-mail adresa potvrđena</h2><p id="email-result-description">Adresa je potvrđena. Vaš korisnički račun sada čeka odobrenje administratora.</p><button id="email-result-continue" type="button">Nastavi na prijavu</button></div></section>
 <section id="terms-gate" hidden aria-labelledby="terms-title"><div class="terms-card"><h2 id="terms-title">Uvjeti korištenja</h2><p>Prije prvog pristupa potvrdite da ste upoznati s pravilima korištenja Automatskog troškovnika.</p><ul><li>Izračuni su informativne prirode i nisu službeno odobren trošak priključka.</li><li>Prije službene uporabe potrebno je provjeriti podatke, količine, cijene i važeća pravila.</li><li>Korisnik je odgovoran za točnost unesenih podataka i čuvanje pristupnih podataka.</li><li>Podaci se spremaju u povezanu bazu radi rada na troškovnicima.</li></ul><label><input type="checkbox" id="terms-accepted">Pročitao/la sam i prihvaćam navedene uvjete korištenja.</label><p id="terms-status" role="status"></p><div style="display:flex;flex-wrap:wrap;gap:9px"><button id="terms-confirm" disabled>Prihvaćam i nastavljam</button><button id="terms-signout" type="button">Odjava</button></div></div></section>
 
@@ -1441,7 +1481,7 @@ html:not(.auth-approved) body{background:linear-gradient(135deg,#eaf1fb 0%,#f8fa
 <!-- ==================== APLIKACIJA ==================== -->
 <div class="wrap">
 <div id="auth-toolbar" hidden>
-  <button id="auth-profile-toggle" type="button" aria-label="Korisnički izbornik" aria-expanded="false" aria-controls="auth-profile-menu" title="Korisnički račun">👤</button>
+  <button id="auth-profile-toggle" type="button" aria-label="Korisnički izbornik" aria-expanded="false" aria-controls="auth-profile-menu" title="Korisnički račun"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg></button>
   <div id="auth-profile-menu" hidden>
     <div class="auth-menu-identity"><span class="auth-menu-caption">Prijavljeni korisnik</span><span id="auth-username"></span></div>
     <button id="auth-admin-button" hidden type="button">⚙ Administracija</button>
@@ -4675,13 +4715,69 @@ function toggleRequestCodebook(force){
 
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
-const sb=createClient('https://jegtseiwalmynkugadrr.supabase.co','sb_publishable_qtMML285ibxEJRaH8Wwj6Q_PEHUZJN7');
+// Prijava: trajna sesija samo uz označeno „Zapamti me”.
+const AUTH_PREF='at-remember-session';
+const usePersistentSession=()=>localStorage.getItem(AUTH_PREF)!=='false';
+const authStorage={
+ getItem(key){return sessionStorage.getItem(key)??localStorage.getItem(key)},
+ setItem(key,value){
+   if(usePersistentSession()){localStorage.setItem(key,value);sessionStorage.removeItem(key)}
+   else {sessionStorage.setItem(key,value);localStorage.removeItem(key)}
+ },
+ removeItem(key){localStorage.removeItem(key);sessionStorage.removeItem(key)}
+};
+const sb=createClient('https://jegtseiwalmynkugadrr.supabase.co','sb_publishable_qtMML285ibxEJRaH8Wwj6Q_PEHUZJN7',{auth:{storage:authStorage,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+
 const $=id=>document.getElementById(id);
 const message=text=>{$('auth-message').textContent=text};
 let currentUser=null,currentProfile=null;
 const TERMS_VERSION='2026-10-v1';
 let emailLanding= new URLSearchParams(location.search).get('email-confirmed')==='1';
 let checkingAccess=false;
+let recoveryMode=new URLSearchParams(location.hash.slice(1)).get('type')==='recovery'||new URLSearchParams(location.search).get('type')==='recovery';
+let recoveryCompleted=false;
+function showRecovery(){
+ $('auth-loading').hidden=true;
+ $('auth-shell').hidden=true;
+ $('auth-toolbar').hidden=true;
+ $('terms-gate').hidden=true;
+ $('email-result').hidden=true;
+ $('recovery-screen').hidden=false;
+}
+function clearRecoveryUrl(){
+ const u=new URL(location.href);
+ u.hash='';u.searchParams.delete('type');u.searchParams.delete('code');
+ history.replaceState(null,'',u.pathname+u.search);
+}
+$('recovery-form').onsubmit=async event=>{
+ event.preventDefault();
+ const pass=$('recovery-new').value,repeat=$('recovery-repeat').value;
+ if(pass.length<8){$('recovery-status').textContent='Lozinka mora imati najmanje 8 znakova.';return}
+ if(pass!==repeat){$('recovery-status').textContent='Lozinke se ne podudaraju.';return}
+ const button=$('recovery-submit');button.disabled=true;
+ $('recovery-status').textContent='Spremanje nove lozinke…';
+ try{
+  const {data:{session},error:sessionError}=await sb.auth.getSession();
+  if(sessionError||!session)throw new Error('Poveznica je nevažeća ili je istekla. Zatražite novu poveznicu za obnovu lozinke.');
+  const {error}=await sb.auth.updateUser({password:pass});
+  if(error)throw error;
+  recoveryCompleted=true;
+  $('recovery-form').hidden=true;
+  $('recovery-status').textContent='Lozinka je uspješno promijenjena. Sada se možete prijaviti.';
+  $('recovery-back').hidden=false;
+  clearRecoveryUrl();
+  await sb.auth.signOut();
+ }catch(err){$('recovery-status').textContent=err.message||'Promjena lozinke nije uspjela.'}
+ finally{button.disabled=false}
+};
+$('recovery-back').onclick=()=>{
+ recoveryMode=false;recoveryCompleted=false;
+ $('recovery-screen').hidden=true;
+ $('recovery-form').hidden=false;
+ $('recovery-form').reset();
+ refreshAccess();
+};
+
 $('terms-accepted').onchange=()=>{$('terms-confirm').disabled=!$('terms-accepted').checked};
 $('email-result-continue').onclick=()=>{
  emailLanding=false;$('email-result').hidden=true;
@@ -4729,6 +4825,7 @@ async function refreshAccess(){
   if(checkingAccess)return;checkingAccess=true;
   try{
   lock();
+  if(recoveryMode){showRecovery();return}
   const {data:{user},error}=await sb.auth.getUser();
   if(error||!user){message('');$('auth-signout-wait').hidden=true;showAuth();return}
   currentUser=user;$('auth-signout-wait').hidden=false;
@@ -4751,7 +4848,9 @@ async function refreshAccess(){
   $('terms-gate').hidden=true;unlock();pingActivity();
   }finally{checkingAccess=false}
 }
+$('auth-remember').checked=usePersistentSession();
 $('auth-login').onclick=async()=>{
+ localStorage.setItem(AUTH_PREF,String($('auth-remember').checked));
  message('Prijava...');const {error}=await sb.auth.signInWithPassword({email:$('auth-email').value.trim(),password:$('auth-password').value});
  if(error)message(error.message);else await refreshAccess()
 };
@@ -4951,7 +5050,12 @@ $('cloud-delete').onclick=async()=>{
 const originalUnlock=unlock;
 unlock=()=>{originalUnlock();refreshCloud()};
 
-sb.auth.onAuthStateChange(()=>{setTimeout(refreshAccess,0)});
+sb.auth.onAuthStateChange((event)=>{
+ if(event==='PASSWORD_RECOVERY'){recoveryMode=true;setTimeout(showRecovery,0);return}
+ if(recoveryMode)return;
+ setTimeout(refreshAccess,0);
+});
+if(recoveryMode)showRecovery();
 await refreshAccess();
 </script></body>
 </html>
