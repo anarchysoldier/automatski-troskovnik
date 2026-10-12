@@ -1370,6 +1370,22 @@ html:not(.auth-approved) body{background:linear-gradient(135deg,#eaf1fb 0%,#f8fa
 #password-modal .admin-ghost{background:#edf3f9;color:#34536e;height:36px}
 #password-modal #password-status{min-height:18px;color:#23557d}
 @media(max-width:650px){#auth-admin{padding:10px!important}#auth-admin .admin-head{padding:20px}#auth-admin .admin-main{padding:13px}#auth-admin .admin-tools{align-items:stretch;flex-direction:column}}
+</style><style>
+/* v187 - kompaktni korisnički izbornik */
+#auth-toolbar{position:fixed;top:12px;right:16px;z-index:10005;display:block;width:auto;max-width:none;padding:0;background:transparent;border:0;box-shadow:none;backdrop-filter:none;overflow:visible}
+#auth-toolbar[hidden],#auth-profile-menu[hidden]{display:none!important}
+#auth-toolbar #auth-profile-toggle{display:grid;place-items:center;width:42px;height:42px;padding:0;margin:0;border:1px solid #dce6f1;border-radius:50%;background:#fff;color:#244d76;font-size:20px;box-shadow:0 3px 14px #102a431c;cursor:pointer}
+#auth-toolbar #auth-profile-toggle:hover,#auth-toolbar #auth-profile-toggle[aria-expanded="true"]{background:#eaf2fa;border-color:#b9d0e6}
+#auth-toolbar #auth-profile-menu{position:absolute;right:0;top:calc(100% + 10px);width:min(285px,calc(100vw - 32px));box-sizing:border-box;padding:8px;border:1px solid #dce6f1;border-radius:14px;background:#fff;box-shadow:0 14px 38px #102a4329;color:#344c63;display:flex;flex-direction:column;gap:3px}
+#auth-toolbar .auth-menu-identity{padding:11px 10px 13px;border-bottom:1px solid #e9eef4;margin-bottom:4px;min-width:0}
+#auth-toolbar .auth-menu-caption{display:block;font-size:10px;color:#8394a5;margin-bottom:5px}
+#auth-toolbar #auth-username{display:block;max-width:100%;overflow-wrap:anywhere;white-space:normal;font-size:12px;font-weight:700;color:#234564}
+#auth-toolbar #auth-profile-menu button{display:block;text-align:left;width:100%;box-sizing:border-box;background:transparent;color:#365570;font-size:12px;font-weight:650;padding:11px 12px;border:0;border-radius:8px}
+#auth-toolbar #auth-profile-menu button:hover{background:#edf4fb}
+#auth-toolbar #auth-profile-menu button[hidden]{display:none!important}
+#auth-toolbar .auth-menu-divider{border-top:1px solid #e9eef4;margin:4px 0}
+#auth-toolbar #auth-signout{color:#b24545!important;background:transparent}
+#auth-toolbar #auth-signout:hover{background:#fff0f0}
 </style></head>
 <body><div id="auth-loading" role="status" style="position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#f6f8fb;color:#334155;font:16px Arial,sans-serif">Provjera prijave…</div><section id="auth-shell" hidden>
 <div class="auth-hero"><div class="auth-brand"><span class="auth-brand-mark">⚡</span><div><h2>Automatski troškovnik</h2><p>Siguran pristup sustavu za izradu troškovnika</p></div></div></div>
@@ -1424,7 +1440,16 @@ html:not(.auth-approved) body{background:linear-gradient(135deg,#eaf1fb 0%,#f8fa
 
 <!-- ==================== APLIKACIJA ==================== -->
 <div class="wrap">
-<div id="auth-toolbar" hidden><span class="auth-avatar" aria-hidden="true">👤</span><span id="auth-username"></span><button id="auth-admin-button" hidden>Administracija</button><button id="auth-password-button" type="button">Lozinka</button><button id="auth-signout">Odjava</button></div>
+<div id="auth-toolbar" hidden>
+  <button id="auth-profile-toggle" type="button" aria-label="Korisnički izbornik" aria-expanded="false" aria-controls="auth-profile-menu" title="Korisnički račun">👤</button>
+  <div id="auth-profile-menu" hidden>
+    <div class="auth-menu-identity"><span class="auth-menu-caption">Prijavljeni korisnik</span><span id="auth-username"></span></div>
+    <button id="auth-admin-button" hidden type="button">⚙ Administracija</button>
+    <button id="auth-password-button" type="button">🔒 Promjena lozinke</button>
+    <div class="auth-menu-divider"></div>
+    <button id="auth-signout" type="button">↪ Odjava</button>
+  </div>
+</div>
 <header>
   <h1>Automatski troškovnik priključka</h1>
 </header>
@@ -4682,7 +4707,22 @@ function switchAuthTab(which){
 $('auth-tab-login').onclick=()=>switchAuthTab('login');
 $('auth-tab-register').onclick=()=>switchAuthTab('register');
 
-function lock(){document.getElementById('cloud-panel').hidden=true;document.documentElement.classList.remove('auth-approved');$('auth-shell').hidden=true;$('auth-toolbar').hidden=true;$('auth-admin').hidden=true}
+function closeProfileMenu(){
+ const menu=$('auth-profile-menu'),toggle=$('auth-profile-toggle');
+ menu.hidden=true;toggle.setAttribute('aria-expanded','false');
+}
+$('auth-profile-toggle').addEventListener('click',()=>{
+ const menu=$('auth-profile-menu'),open=menu.hidden;
+ menu.hidden=!open;$('auth-profile-toggle').setAttribute('aria-expanded',String(open));
+});
+document.addEventListener('pointerdown',event=>{
+ if(!$('auth-toolbar').contains(event.target))closeProfileMenu();
+});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeProfileMenu()});
+for(const id of ['auth-admin-button','auth-password-button','auth-signout']){
+ $(id).addEventListener('click',closeProfileMenu);
+}
+function lock(){closeProfileMenu();document.getElementById('cloud-panel').hidden=true;document.documentElement.classList.remove('auth-approved');$('auth-shell').hidden=true;$('auth-toolbar').hidden=true;$('auth-admin').hidden=true}
 function showAuth(){ $('auth-loading').hidden=true; $('auth-shell').hidden=false }
 function unlock(){$('auth-loading').hidden=true;document.getElementById('cloud-panel').hidden=false;document.documentElement.classList.add('auth-approved');$('auth-shell').hidden=true;$('auth-toolbar').hidden=false;$('auth-username').textContent=currentProfile.full_name||currentUser.email;$('auth-admin-button').hidden=currentProfile.role!=='admin'}
 async function refreshAccess(){
@@ -4690,7 +4730,7 @@ async function refreshAccess(){
   try{
   lock();
   const {data:{user},error}=await sb.auth.getUser();
-  if(error||!user){message('Prijavi se ili registriraj.');$('auth-signout-wait').hidden=true;showAuth();return}
+  if(error||!user){message('');$('auth-signout-wait').hidden=true;showAuth();return}
   currentUser=user;$('auth-signout-wait').hidden=false;
   if(!user.email_confirmed_at){message('Provjeri e-mail i potvrdi adresu prije korištenja aplikacije.');showAuth();return}
   const {data,error:profileError}=await sb.from('profiles').select('id,email,full_name,role,status,accepted_terms_version').eq('id',user.id).single();
