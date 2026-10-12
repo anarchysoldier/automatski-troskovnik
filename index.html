@@ -1290,32 +1290,120 @@ html:not(.auth-approved) .wrap,html:not(.auth-approved) .preset-fab-wrap,html:no
 #cloud-panel #cloud-inner{max-height:none!important;overflow:visible!important;border:0!important}
 @media(max-width:620px){#cloud-panel{right:14px!important;bottom:146px!important;width:52px!important;height:52px!important}#cloud-toggle{width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important}#cloud-content{right:0;bottom:64px;width:min(345px,calc(100vw - 28px));max-height:65vh}#auth-toolbar{margin:8px 0 12px auto!important}}
 @media print{#cloud-panel,#auth-toolbar{display:none!important}}
+</style><style>
+/* v184: obnovljeni autentifikacijski ekran */
+html:not(.auth-approved) body{background:linear-gradient(135deg,#eaf1fb 0%,#f8fafc 48%,#eaf3f7 100%)}
+#auth-shell{box-sizing:border-box;max-width:460px;margin:clamp(30px,7vh,95px) auto;padding:0 34px 28px;border:1px solid #dce5f0;border-radius:22px;background:#fff;box-shadow:0 24px 65px rgba(25,48,82,.13);overflow:hidden;font-family:Inter,'Segoe UI',Arial,sans-serif}
+#auth-shell .auth-hero{margin:0 -34px 25px;padding:28px 34px 26px;background:linear-gradient(120deg,#102c51,#24598b);color:#fff}
+#auth-shell .auth-brand{display:flex;align-items:center;gap:12px}
+#auth-shell .auth-brand-mark{width:42px;height:42px;display:grid;place-items:center;background:#ffffff20;border:1px solid #ffffff30;border-radius:13px;font-size:22px}
+#auth-shell .auth-hero h2{margin:0;color:white;font-size:20px;letter-spacing:-.35px;line-height:1.25}
+#auth-shell .auth-hero p{margin:5px 0 0;color:#c7dcf0;font-size:12px}
+#auth-shell .auth-tabs{background:#f1f5f9;border-radius:12px;padding:5px;gap:5px;margin:0 0 24px}
+#auth-shell .auth-tab{background:transparent;color:#64748b;border:0;border-radius:9px;padding:12px 8px;font-size:13px}
+#auth-shell .auth-tab.active{background:white;color:#174875;box-shadow:0 2px 9px #122c4918}
+#auth-shell .auth-card h3{font-size:19px;color:#142b46;margin:0 0 6px}
+#auth-shell .auth-subtitle{font-size:12px;color:#718096;margin:0 0 18px;line-height:1.5}
+#auth-shell .auth-label{display:block;font-size:12px;font-weight:650;color:#34475d;margin:14px 0 6px}
+#auth-shell input{box-sizing:border-box;width:100%;margin:0;padding:12px 13px;border:1px solid #d5dfeb;border-radius:10px;background:#fff;font-size:14px;outline:none;transition:border-color .15s,box-shadow .15s}
+#auth-shell input:focus{border-color:#387db9;box-shadow:0 0 0 3px #387db91a}
+#auth-shell .auth-primary{background:#215d94;color:#fff;border:0;border-radius:10px;padding:13px;margin:22px 0 8px;font-weight:700;box-shadow:0 6px 16px #215d9425}
+#auth-shell .auth-primary:hover{background:#164a7a}
+#auth-shell .auth-link{color:#245b8d;font-size:12px;font-weight:600}
+#auth-shell #auth-message{margin:13px 0 4px;padding:10px 12px;background:#f5f8fc;border-radius:9px;min-height:18px}
+#auth-shell .auth-footnote{font-size:11px;color:#8492a5;text-align:center;margin:18px 0 0}
+#auth-shell #auth-signout-wait{background:#eef3f9;color:#234b72}
+#auth-shell .auth-card[hidden],#email-result[hidden],#terms-gate[hidden]{display:none!important}
+#email-result{position:fixed;inset:0;z-index:10080;display:grid;place-items:center;background:#eef3fa;padding:18px;font-family:Inter,Arial,sans-serif}
+#email-result .result-card{max-width:450px;background:#fff;border-radius:20px;padding:35px;box-shadow:0 16px 50px #172c461b;text-align:center}
+#email-result .result-icon{font-size:36px;color:#15803d}#email-result h2{color:#183b60}
+#email-result button{border:0;border-radius:9px;background:#215d94;color:#fff;padding:12px 20px;cursor:pointer}
+#terms-gate{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;background:#112a43bd;padding:16px;font-family:Inter,Arial,sans-serif}
+#terms-gate .terms-card{width:min(540px,100%);box-sizing:border-box;max-height:90vh;overflow:auto;background:#fff;border-radius:18px;padding:28px;box-shadow:0 20px 65px #0003}
+#terms-gate h2{margin:0 0 8px;color:#163b60}#terms-gate p,#terms-gate li{font-size:13px;line-height:1.6;color:#45566a}
+#terms-gate label{display:flex;align-items:flex-start;gap:10px;margin:17px 0;font-size:13px;line-height:1.5;color:#273b51}
+#terms-gate input{margin-top:3px;accent-color:#215d94}
+#terms-gate button{border:0;border-radius:9px;padding:11px 15px;cursor:pointer;background:#215d94;color:white;font-weight:650}
+#terms-gate button:disabled{opacity:.45;cursor:not-allowed}
+#terms-gate #terms-signout{background:#edf2f7;color:#41536a}
+@media(max-width:540px){#auth-shell{margin:18px 12px;padding:0 22px 22px;border-radius:17px}#auth-shell .auth-hero{margin:0 -22px 22px;padding:24px 22px}}
 </style>
-</head>
+<style>
+/* v185: usklađeno administratorsko sučelje i promjena lozinke */
+#auth-admin{background:#f0f4f8!important;color:#203750!important;padding:22px!important;z-index:30000}
+#auth-admin[hidden],#password-modal[hidden]{display:none!important}
+#auth-admin .admin-layout{max-width:1140px;margin:0 auto}
+#auth-admin .admin-head{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(115deg,#173e65,#245e91);border-radius:17px;color:white;padding:26px 28px;box-shadow:0 12px 35px #0d34521f}
+#auth-admin .admin-eyebrow{font-size:10px;letter-spacing:2px;font-weight:800;opacity:.75}
+#auth-admin .admin-head h2{margin:6px 0;font-size:24px;color:white}
+#auth-admin .admin-head p{margin:0;color:#d6e5f2;font-size:13px}
+#auth-admin .admin-main{background:white;border:1px solid #e2eaf2;border-radius:16px;padding:22px;margin-top:16px;box-shadow:0 5px 18px #1b42610d}
+#auth-admin .admin-tools{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:12px}
+#auth-admin .admin-search-label{font-size:12px;font-weight:650;color:#4c6479;flex:1;max-width:450px}
+#auth-admin .admin-search-label input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:11px 13px;border:1px solid #cbd8e5;border-radius:9px;font:inherit;font-size:13px}
+#auth-admin .admin-hint{color:#738499;font-size:12px;line-height:1.5}
+#auth-admin .admin-table-wrap{overflow:auto}
+#auth-admin table{width:100%;min-width:820px;border-collapse:collapse}
+#auth-admin th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#7b8da0;background:#f7f9fc}
+#auth-admin th,#auth-admin td{padding:14px 11px;border-bottom:1px solid #edf1f6;vertical-align:middle}
+#auth-admin td{font-size:12px;color:#324960}
+#auth-admin .admin-person{font-weight:700;font-size:13px}
+#auth-admin .admin-mail{font-size:11px;color:#7c8da0;margin-top:4px}
+#auth-admin .admin-actions{display:flex;gap:5px;flex-wrap:wrap}
+#auth-admin button{background:#eaf1f9;color:#20537f;border:1px solid #d9e6f3;border-radius:8px;font-size:11px;font-weight:700;padding:8px 10px;margin:0}
+#auth-admin button:hover:not(:disabled){background:#d8e8f6}
+#auth-admin .admin-ghost{background:#ffffff1c;color:white;border-color:#ffffff55;white-space:nowrap}
+#auth-admin .admin-danger{background:#fff0f0;color:#b83232;border-color:#f5cccc}
+#auth-admin .admin-danger:hover:not(:disabled){background:#ffe0e0}
+#auth-admin .admin-pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#edf4fb;font-size:11px;font-weight:700}
+#auth-admin .admin-pill.approved{background:#e9f7f0;color:#17774c}
+#auth-admin .admin-pill.pending{background:#fff5dd;color:#936300}
+#auth-admin .admin-pill.blocked{background:#ffebeb;color:#ae3838}
+#password-modal{position:fixed;inset:0;z-index:30010;background:#102a43b8;display:grid;place-items:center;padding:16px;font-family:Inter,Arial,sans-serif}
+#password-modal .password-card{background:white;border-radius:18px;padding:27px;width:min(440px,100%);box-sizing:border-box;box-shadow:0 18px 65px #0b213b55}
+#password-modal .password-top{display:flex;justify-content:space-between;gap:10px}
+#password-modal h2{margin:0 0 6px;color:#173e65;font-size:22px}
+#password-modal p{color:#738499;font-size:12px}
+#password-modal label{display:block;font-size:12px;font-weight:700;color:#405a73;margin:15px 0}
+#password-modal input{display:block;box-sizing:border-box;width:100%;padding:12px;border:1px solid #cbd8e5;border-radius:9px;margin-top:7px}
+#password-modal button{background:#215d94;color:white;border:0;border-radius:9px;padding:11px 14px;cursor:pointer;font-weight:700}
+#password-modal .admin-ghost{background:#edf3f9;color:#34536e;height:36px}
+#password-modal #password-status{min-height:18px;color:#23557d}
+@media(max-width:650px){#auth-admin{padding:10px!important}#auth-admin .admin-head{padding:20px}#auth-admin .admin-main{padding:13px}#auth-admin .admin-tools{align-items:stretch;flex-direction:column}}
+</style></head>
 <body><div id="auth-loading" role="status" style="position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#f6f8fb;color:#334155;font:16px Arial,sans-serif">Provjera prijave…</div><section id="auth-shell" hidden>
-<h2>Automatski troškovnik</h2>
+<div class="auth-hero"><div class="auth-brand"><span class="auth-brand-mark">⚡</span><div><h2>Automatski troškovnik</h2><p>Siguran pristup sustavu za izradu troškovnika</p></div></div></div>
 <div class="auth-tabs" role="tablist" aria-label="Prijava ili registracija">
 <button id="auth-tab-login" class="auth-tab active" role="tab" aria-selected="true" aria-controls="auth-login-card">Prijava</button>
 <button id="auth-tab-register" class="auth-tab" role="tab" aria-selected="false" aria-controls="auth-register-card">Registracija</button>
 </div>
 <div id="auth-login-card" class="auth-card" role="tabpanel" aria-labelledby="auth-tab-login">
-<h3>Prijava u sustav</h3>
+<h3>Dobro došli natrag</h3><p class="auth-subtitle">Prijavite se za nastavak rada.</p>
+<label class="auth-label" for="auth-email">E-mail adresa</label>
 <input id="auth-email" type="email" placeholder="E-mail adresa" autocomplete="email">
+<label class="auth-label" for="auth-password">Lozinka</label>
 <input id="auth-password" type="password" placeholder="Lozinka" autocomplete="current-password">
 <button id="auth-login" class="auth-primary">Prijavi se</button>
 <button id="auth-forgot" class="auth-link">Zaboravljena lozinka?</button>
 </div>
 <div id="auth-register-card" class="auth-card" role="tabpanel" aria-labelledby="auth-tab-register" hidden>
-<h3>Registracija novog korisnika</h3>
+<h3>Izradite korisnički račun</h3>
 <p class="hint-msg">Nakon potvrde e-maila administrator mora odobriti tvoj račun.</p>
+<label class="auth-label" for="auth-name">Ime i prezime</label>
 <input id="auth-name" placeholder="Ime i prezime" autocomplete="name">
+<label class="auth-label" for="auth-register-email">E-mail adresa</label>
 <input id="auth-register-email" type="email" placeholder="E-mail adresa" autocomplete="email">
+<label class="auth-label" for="auth-register-password">Lozinka</label>
 <input id="auth-register-password" type="password" placeholder="Lozinka (najmanje 6 znakova)" autocomplete="new-password">
 <button id="auth-register" class="auth-primary">Registriraj se</button>
 </div>
 <p id="auth-message" class="hint-msg" role="status">Učitavanje...</p>
-<button id="auth-signout-wait" hidden>Odjava</button>
+<button id="auth-signout-wait" hidden>Odjava</button><p class="auth-footnote">Pristup je dopušten samo odobrenim korisnicima.</p>
 </section>
+
+
+<section id="email-result" hidden aria-live="polite"><div class="result-card"><div class="result-icon">✓</div><h2 id="email-result-title">E-mail adresa potvrđena</h2><p id="email-result-description">Adresa je potvrđena. Vaš korisnički račun sada čeka odobrenje administratora.</p><button id="email-result-continue" type="button">Nastavi na prijavu</button></div></section>
+<section id="terms-gate" hidden aria-labelledby="terms-title"><div class="terms-card"><h2 id="terms-title">Uvjeti korištenja</h2><p>Prije prvog pristupa potvrdite da ste upoznati s pravilima korištenja Automatskog troškovnika.</p><ul><li>Izračuni su informativne prirode i nisu službeno odobren trošak priključka.</li><li>Prije službene uporabe potrebno je provjeriti podatke, količine, cijene i važeća pravila.</li><li>Korisnik je odgovoran za točnost unesenih podataka i čuvanje pristupnih podataka.</li><li>Podaci se spremaju u povezanu bazu radi rada na troškovnicima.</li></ul><label><input type="checkbox" id="terms-accepted">Pročitao/la sam i prihvaćam navedene uvjete korištenja.</label><p id="terms-status" role="status"></p><div style="display:flex;flex-wrap:wrap;gap:9px"><button id="terms-confirm" disabled>Prihvaćam i nastavljam</button><button id="terms-signout" type="button">Odjava</button></div></div></section>
 
 <section id="cloud-panel" hidden>
 <button id="cloud-toggle" type="button" aria-label="Moji troškovnici" title="Moji troškovnici" aria-controls="cloud-content" aria-expanded="false">☁</button>
@@ -1325,12 +1413,18 @@ html:not(.auth-approved) .wrap,html:not(.auth-approved) .preset-fab-wrap,html:no
 <input id="cloud-filter" placeholder="Pretraži spremljene predmete"/>
 <select id="cloud-select" size="6" aria-label="Spremljeni troškovnici"></select>
 <div class="cloud-actions"><button id="cloud-open">Otvori odabrani</button><button id="cloud-delete">Obriši odabrani</button></div>
-<small id="cloud-status" role="status">Spremanje u Supabase. Lokalni spremljeni predmeti ostaju nepromijenjeni.</small></div></div></section>
-<section id="auth-admin" hidden><h2>Administracija korisnika</h2><button id="auth-close-admin">Zatvori</button><button id="auth-reload-users">Osvježi</button><div id="auth-users"></div></section>
+<small id="cloud-autosave" role="status" style="display:block;margin:7px 0;color:#53657a">Automatsko spremanje: nema otvorenog predmeta u oblaku.</small><small id="cloud-status" role="status">Spremanje u Supabase. Lokalni spremljeni predmeti ostaju nepromijenjeni.</small></div></div></section>
+<section id="password-modal" hidden aria-labelledby="password-title"><div class="password-card"><div class="password-top"><div><h2 id="password-title">Promjena lozinke</h2><p>Promijeni lozinku bez e-mail potvrde.</p></div><button id="password-close" type="button" class="admin-ghost">✕</button></div>
+<form id="password-form"><label>Trenutačna lozinka<input id="password-old" type="password" autocomplete="current-password" required></label><label>Nova lozinka<input id="password-new" type="password" autocomplete="new-password" minlength="8" required></label><label>Ponovi novu lozinku<input id="password-repeat" type="password" autocomplete="new-password" minlength="8" required></label><p id="password-status" role="status"></p><button type="submit">Promijeni lozinku</button></form></div></section>
+<section id="auth-admin" hidden aria-labelledby="admin-title">
+<div class="admin-layout">
+<header class="admin-head"><div><div class="admin-eyebrow">UPRAVLJANJE PRISTUPOM</div><h2 id="admin-title">Administracija korisnika</h2><p>Pregled korisnika, posljednjih prijava i korisničkih ovlasti</p></div><button id="auth-close-admin" class="admin-ghost" type="button">✕ Zatvori</button></header>
+<div class="admin-main"><div class="admin-tools"><label class="admin-search-label">Pretraži korisnike<input id="admin-search" type="search" placeholder="Ime ili e-mail adresa"></label><button id="auth-reload-users" type="button">↻ Osvježi</button></div><p class="admin-hint">Brisanje korisnika trajno uklanja račun i povezane troškovnike. Posljednja aktivnost bilježi se tijekom rada u aplikaciji.</p><div id="auth-users"></div></div>
+</div></section>
 
 <!-- ==================== APLIKACIJA ==================== -->
 <div class="wrap">
-<div id="auth-toolbar" hidden><span class="auth-avatar" aria-hidden="true">👤</span><span id="auth-username"></span><button id="auth-admin-button" hidden>Administracija</button><button id="auth-signout">Odjava</button></div>
+<div id="auth-toolbar" hidden><span class="auth-avatar" aria-hidden="true">👤</span><span id="auth-username"></span><button id="auth-admin-button" hidden>Administracija</button><button id="auth-password-button" type="button">Lozinka</button><button id="auth-signout">Odjava</button></div>
 <header>
   <h1>Automatski troškovnik priključka</h1>
 </header>
@@ -4552,30 +4646,7 @@ function toggleRequestCodebook(force){
   </div>
   <div class="notice-footer"><button type="button" id="costNoticeConfirm" class="notice-confirm" disabled>Potvrđujem</button></div>
 </dialog>
-<script>
-(() => {
-  const acceptanceKey = 'automatski_troskovnik_notice_accepted';
-  try {
-    if (localStorage.getItem(acceptanceKey) === 'true') return;
-  } catch (e) { /* Ako pohrana nije dostupna, napomena se prikazuje. */ }
-  const notice = document.getElementById('costNotice');
-  const accepted = document.getElementById('costNoticeAccepted');
-  const confirm = document.getElementById('costNoticeConfirm');
-  accepted.checked = false;
-  confirm.disabled = true;
-  accepted.addEventListener('change', () => { confirm.disabled = !accepted.checked; });
-  notice.addEventListener('cancel', event => event.preventDefault());
-  confirm.addEventListener('click', () => {
-    if (!accepted.checked) return;
-    try { localStorage.setItem(acceptanceKey, 'true'); } catch (e) {}
-    notice.close();
-    document.body.classList.remove('cost-notice-open');
-    document.getElementById('requestType')?.focus();
-  });
-  document.body.classList.add('cost-notice-open');
-  notice.showModal();
-})();
-</script>
+
 
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
@@ -4583,6 +4654,24 @@ const sb=createClient('https://jegtseiwalmynkugadrr.supabase.co','sb_publishable
 const $=id=>document.getElementById(id);
 const message=text=>{$('auth-message').textContent=text};
 let currentUser=null,currentProfile=null;
+const TERMS_VERSION='2026-10-v1';
+let emailLanding= new URLSearchParams(location.search).get('email-confirmed')==='1';
+let checkingAccess=false;
+$('terms-accepted').onchange=()=>{$('terms-confirm').disabled=!$('terms-accepted').checked};
+$('email-result-continue').onclick=()=>{
+ emailLanding=false;$('email-result').hidden=true;
+ const u=new URL(location.href);u.searchParams.delete('email-confirmed');history.replaceState(null,'',u.pathname+u.search+u.hash);
+ refreshAccess();
+};
+$('terms-signout').onclick=async()=>{await sb.auth.signOut();currentUser=null;currentProfile=null;$('terms-gate').hidden=true;await refreshAccess()};
+$('terms-confirm').onclick=async()=>{
+ if(!$('terms-accepted').checked)return;
+ $('terms-confirm').disabled=true;$('terms-status').textContent='Spremanje prihvaćanja…';
+ const {error}=await sb.rpc('accept_current_terms',{terms_version:TERMS_VERSION});
+ if(error){$('terms-status').textContent='Pogreška: '+error.message;$('terms-confirm').disabled=false;return}
+ $('terms-gate').hidden=true;$('terms-status').textContent='';await refreshAccess();
+};
+
 function switchAuthTab(which){
  const login=which==='login';
  $('auth-login-card').hidden=!login;$('auth-register-card').hidden=login;
@@ -4597,23 +4686,37 @@ function lock(){document.getElementById('cloud-panel').hidden=true;document.docu
 function showAuth(){ $('auth-loading').hidden=true; $('auth-shell').hidden=false }
 function unlock(){$('auth-loading').hidden=true;document.getElementById('cloud-panel').hidden=false;document.documentElement.classList.add('auth-approved');$('auth-shell').hidden=true;$('auth-toolbar').hidden=false;$('auth-username').textContent=currentProfile.full_name||currentUser.email;$('auth-admin-button').hidden=currentProfile.role!=='admin'}
 async function refreshAccess(){
+  if(checkingAccess)return;checkingAccess=true;
+  try{
   lock();
   const {data:{user},error}=await sb.auth.getUser();
   if(error||!user){message('Prijavi se ili registriraj.');$('auth-signout-wait').hidden=true;showAuth();return}
   currentUser=user;$('auth-signout-wait').hidden=false;
   if(!user.email_confirmed_at){message('Provjeri e-mail i potvrdi adresu prije korištenja aplikacije.');showAuth();return}
-  const {data,error:profileError}=await sb.from('profiles').select('id,email,full_name,role,status').eq('id',user.id).single();
+  const {data,error:profileError}=await sb.from('profiles').select('id,email,full_name,role,status,accepted_terms_version').eq('id',user.id).single();
   if(profileError){message('Ne mogu provjeriti pristup: '+profileError.message);showAuth();return}
   currentProfile=data;
+  if(emailLanding && data.status!=='approved'){ $('auth-loading').hidden=true;$('email-result').hidden=false;return; }
   if(data.status!=='approved'){message(data.status==='blocked'?'Administrator je blokirao pristup.':'E-mail je potvrđen. Čeka se odobrenje administratora.');showAuth();return}
-  unlock();
+  if(emailLanding){
+    $('auth-loading').hidden=true;
+    $('email-result').hidden=false;
+    $('email-result-title').textContent='E-mail adresa potvrđena';
+    $('email-result-description').textContent='Adresa je potvrđena. Račun je '+(data.status==='approved'?'odobren. Nastavite na prijavu.':'na čekanju administratorskog odobrenja.');
+    return;
+  }
+  if(data.accepted_terms_version!==TERMS_VERSION){
+    $('auth-loading').hidden=true;$('terms-gate').hidden=false;return;
+  }
+  $('terms-gate').hidden=true;unlock();pingActivity();
+  }finally{checkingAccess=false}
 }
 $('auth-login').onclick=async()=>{
  message('Prijava...');const {error}=await sb.auth.signInWithPassword({email:$('auth-email').value.trim(),password:$('auth-password').value});
  if(error)message(error.message);else await refreshAccess()
 };
 $('auth-register').onclick=async()=>{
- message('Registracija...');const {error}=await sb.auth.signUp({email:$('auth-register-email').value.trim(),password:$('auth-register-password').value,options:{data:{full_name:$('auth-name').value.trim()},emailRedirectTo:location.origin+location.pathname}});
+ message('Registracija...');const {error}=await sb.auth.signUp({email:$('auth-register-email').value.trim(),password:$('auth-register-password').value,options:{data:{full_name:$('auth-name').value.trim()},emailRedirectTo:location.origin+location.pathname+'?email-confirmed=1'}});
  message(error?error.message:'Ako je registracija prihvaćena, provjeri e-mail. Nakon potvrde administrator mora odobriti račun.')
 };
 $('auth-forgot').onclick=async()=>{
@@ -4621,31 +4724,131 @@ $('auth-forgot').onclick=async()=>{
  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
  message(error?error.message:'Ako račun postoji, poslana je poruka za obnovu lozinke.')
 };
-async function logout(){await sb.auth.signOut();currentUser=null;currentProfile=null;await refreshAccess()}
+async function logout(){stopCloudAutosave();await sb.auth.signOut();currentUser=null;currentProfile=null;await refreshAccess()}
 $('auth-signout').onclick=logout;$('auth-signout-wait').onclick=logout;
-async function loadUsers(){
- const {data,error}=await sb.from('profiles').select('id,email,full_name,role,status,created_at').order('created_at',{ascending:false});
- if(error){$('auth-users').textContent=error.message;return}
+let adminUsers=[];
+function fmtLogin(value){if(!value)return 'Nikad';const d=new Date(value);return Number.isNaN(d.getTime())?'Nije dostupno':d.toLocaleString('hr-HR',{dateStyle:'medium',timeStyle:'short'})}
+function renderUsers(){
+ const term=$('admin-search').value.trim().toLocaleLowerCase('hr-HR');
+ const users=adminUsers.filter(u=>(u.email||'').toLocaleLowerCase('hr-HR').includes(term)||(u.full_name||'').toLocaleLowerCase('hr-HR').includes(term));
+ const wrap=document.createElement('div');wrap.className='admin-table-wrap';
  const table=document.createElement('table'),head=document.createElement('tr');
- for(const name of ['Korisnik','Status','Uloga','Akcije']){const th=document.createElement('th');th.textContent=name;head.append(th)}table.append(head);
- for(const u of data){
-  const tr=document.createElement('tr'),name=document.createElement('td');name.textContent=(u.full_name||'')+' — '+(u.email||'');tr.append(name);
-  for(const value of [u.status,u.role]){const td=document.createElement('td');td.textContent=value;tr.append(td)}
-  const td=document.createElement('td');
-  for(const [label,status,role] of [['Odobri','approved','user'],['Urednik','approved','editor'],['Administrator','approved','admin'],['Blokiraj','blocked',u.role]]){
+ for(const name of ['Korisnik','Status','Uloga','Zadnja aktivnost','Akcije']){const th=document.createElement('th');th.textContent=name;head.append(th)}table.append(head);
+ for(const u of users){
+  const tr=document.createElement('tr'),name=document.createElement('td');
+  const strong=document.createElement('div');strong.className='admin-person';strong.textContent=u.full_name||'Bez imena';
+  const mail=document.createElement('div');mail.className='admin-mail';mail.textContent=u.email||u.id;
+  name.append(strong,mail);tr.append(name);
+  const status=document.createElement('td'),pill=document.createElement('span');pill.className='admin-pill '+u.status;pill.textContent=u.status;status.append(pill);tr.append(status);
+  const role=document.createElement('td');role.textContent=u.role;tr.append(role);
+  const last=document.createElement('td');last.textContent=fmtLogin(u.last_active_at);tr.append(last);
+  const td=document.createElement('td'),actions=document.createElement('div');actions.className='admin-actions';
+  for(const [label,newStatus,newRole] of [['Odobri','approved','user'],['Urednik','approved','editor'],['Administrator','approved','admin'],['Blokiraj','blocked',u.role]]){
    const button=document.createElement('button');button.textContent=label;button.disabled=u.id===currentUser.id;
-   button.onclick=async()=>{if(!confirm('Promijeniti pristup za '+(u.email||u.id)+'?'))return;const {error}=await sb.rpc('admin_set_user_access',{target_user_id:u.id,new_status:status,new_role:role});if(error)alert(error.message);else await loadUsers()};
-   td.append(button)
-  }tr.append(td);table.append(tr)
+   button.onclick=async()=>{if(!confirm('Promijeniti pristup za '+(u.email||u.id)+'?'))return;button.disabled=true;const {error}=await sb.rpc('admin_set_user_access',{target_user_id:u.id,new_status:newStatus,new_role:newRole});if(error){alert(error.message);button.disabled=false}else await loadUsers()};
+   actions.append(button)
+  }
+  const del=document.createElement('button');del.textContent='Obriši';del.className='admin-danger';del.disabled=u.id===currentUser.id;
+  del.onclick=async()=>{
+   if(!confirm('TRAJNO OBRISATI korisnika '+(u.email||u.id)+' i sve njegove troškovnike? Ovu radnju nije moguće poništiti.'))return;
+   const typed=prompt('Za potvrdu brisanja upiši OBRIŠI:');
+   if(typed!=='OBRIŠI')return;
+   del.disabled=true;
+   const {data,error}=await sb.functions.invoke('admin-delete-user',{body:{user_id:u.id}});
+   if(error||data?.error){alert('Brisanje nije uspjelo: '+(data?.error||error.message));del.disabled=false;return}
+   await loadUsers()
+  };
+  actions.append(del);td.append(actions);tr.append(td);table.append(tr)
  }
- $('auth-users').replaceChildren(table)
+ wrap.append(table);$('auth-users').replaceChildren(wrap);
 }
+async function loadUsers(){
+ $('auth-users').textContent='Učitavanje korisnika…';
+ const {data,error}=await sb.rpc('admin_list_users');
+ if(error){$('auth-users').textContent='Pogreška: '+error.message;return}
+ adminUsers=data||[];renderUsers()
+}
+$('admin-search').oninput=renderUsers;
 $('auth-admin-button').onclick=()=>{$('auth-admin').hidden=false;loadUsers()};
 $('auth-close-admin').onclick=()=>{$('auth-admin').hidden=true};
 $('auth-reload-users').onclick=loadUsers;
-
+// Aktivnost se bilježi samo tijekom stvarnog rada; najviše jednom u 5 minuta.
+let lastActivityPing=0;
+async function pingActivity(){
+ if(!currentUser||!currentProfile||currentProfile.status!=='approved'||document.hidden)return;
+ const now=Date.now();if(now-lastActivityPing<300000)return;
+ lastActivityPing=now;
+ const {error}=await sb.rpc('record_my_activity');
+ if(error)lastActivityPing=0;
+}
+for(const eventName of ['pointerdown','keydown'])document.addEventListener(eventName,pingActivity,{passive:true});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)pingActivity()});
+$('auth-password-button').onclick=()=>{$('password-modal').hidden=false;$('password-form').reset();$('password-status').textContent=''};
+$('password-close').onclick=()=>{$('password-modal').hidden=true};
+$('password-form').onsubmit=async e=>{
+ e.preventDefault();
+ const old=$('password-old').value,newPassword=$('password-new').value,again=$('password-repeat').value;
+ if(newPassword!==again){$('password-status').textContent='Nove lozinke se ne podudaraju.';return}
+ if(newPassword.length<8){$('password-status').textContent='Nova lozinka mora imati najmanje 8 znakova.';return}
+ if(old===newPassword){$('password-status').textContent='Nova lozinka mora biti različita od stare.';return}
+ $('password-status').textContent='Provjera trenutačne lozinke…';
+ const {error:verifyError}=await sb.auth.signInWithPassword({email:currentUser.email,password:old});
+ if(verifyError){$('password-status').textContent='Trenutačna lozinka nije ispravna.';return}
+ $('password-status').textContent='Spremanje nove lozinke…';
+ const {error}=await sb.auth.updateUser({password:newPassword});
+ if(error){$('password-status').textContent='Promjena nije uspjela: '+error.message;return}
+ $('password-form').reset();$('password-status').textContent='Lozinka je uspješno promijenjena.';
+};
 // v177 - Supabase cloud projects (explicit save/update; local save remains intact)
 let cloudRows=[];
+// v183: auto-save only the explicitly created/opened cloud document.
+let activeCloudId=null, activeCloudOwner=null, activeCloudName='', activeCloudUser=null;
+let cloudLastState=null, cloudDirty=false, cloudSaving=false, cloudGeneration=0, cloudDebounce=null;
+const autosaveLabel=t=>{$('cloud-autosave').textContent='Automatsko spremanje: '+t};
+function stopCloudAutosave(){
+  ++cloudGeneration; clearTimeout(cloudDebounce); cloudDebounce=null;
+  activeCloudId=null;activeCloudOwner=null;activeCloudName='';activeCloudUser=null;
+  cloudLastState=null;cloudDirty=false;autosaveLabel('nije aktivno (odaberi ili spremi predmet).');
+}
+function activateCloudAutosave(row){
+  ++cloudGeneration;clearTimeout(cloudDebounce);cloudDebounce=null;
+  activeCloudId=row.id;activeCloudOwner=row.owner_id;activeCloudName=row.naziv;
+  activeCloudUser=currentUser?.id||null;
+  cloudLastState=JSON.stringify(window.collectAppState());cloudDirty=false;
+  autosaveLabel('aktivno · '+row.naziv+' · spremljeno');
+}
+async function flushCloudAutosave(){
+  if(cloudSaving||!cloudDirty||!activeCloudId||!currentUser||currentUser.id!==activeCloudUser||currentProfile?.status!=='approved')return;
+  const id=activeCloudId,gen=cloudGeneration,owner=activeCloudOwner;
+  const snapshot=window.collectAppState?.();if(!snapshot)return;
+  const serialized=JSON.stringify(snapshot);
+  if(serialized===cloudLastState){cloudDirty=false;return}
+  cloudSaving=true;autosaveLabel('spremanje u oblak…');
+  try{
+    const {data,error}=await sb.from('troskovnici').update({stanje:snapshot}).eq('id',id).eq('owner_id',owner).select('id').maybeSingle();
+    if(gen!==cloudGeneration)return;
+    if(error||!data){autosaveLabel('pogreška — izmjene nisu spremljene u oblak'+(error?': '+error.message:''));return}
+    cloudLastState=serialized;
+    const latest=JSON.stringify(window.collectAppState());
+    cloudDirty=latest!==serialized;
+    autosaveLabel(cloudDirty?'nove izmjene čekaju spremanje':'spremljeno · '+new Date().toLocaleTimeString('hr-HR'));
+  }finally{
+    cloudSaving=false;
+    if(gen===cloudGeneration&&cloudDirty&&activeCloudId){clearTimeout(cloudDebounce);cloudDebounce=setTimeout(()=>{cloudDebounce=null;flushCloudAutosave()},5000)}
+  }
+}
+// Compare the canonical state, including programmatic edits that do not emit input events.
+setInterval(()=>{
+  if(!activeCloudId||!currentUser||currentUser.id!==activeCloudUser||currentProfile?.status!=='approved'||cloudSaving)return;
+  const state=window.collectAppState?.();if(!state)return;
+  if(JSON.stringify(state)!==cloudLastState){
+    if(!cloudDirty){cloudDirty=true;autosaveLabel('nespremljene izmjene · spremanje uskoro…')}
+    if(!cloudDebounce)cloudDebounce=setTimeout(()=>{cloudDebounce=null;flushCloudAutosave()},2500);
+  }
+},1200);
+window.addEventListener('beforeunload',event=>{
+  if(activeCloudId&&cloudDirty){event.preventDefault();event.returnValue=''}
+});
 const cloudStatus=t=>{$('cloud-status').textContent=t};
 const selectedCloud=()=>cloudRows.find(x=>x.id===$('cloud-select').value);
 function renderCloud(){
@@ -4672,35 +4875,38 @@ $('cloud-filter').oninput=renderCloud;
 $('cloud-select').onchange=()=>{$('cloud-update').disabled=!selectedCloud();const x=selectedCloud();if(x)$('cloud-name').value=x.naziv};
 $('cloud-refresh').onclick=refreshCloud;
 $('cloud-save').onclick=async()=>{
+ if(cloudDirty&&!confirm('Trenutni predmet ima izmjene koje još nisu spremljene u oblak. Spremiti trenutni sadržaj kao NOVI predmet?'))return;
  const naziv=$('cloud-name').value.trim()||window.collectAppState?.().projectName?.trim();
  if(!naziv){cloudStatus('Upiši naziv ili broj predmeta.');return}
  const stanje=window.collectAppState?.();if(!stanje){cloudStatus('Stanje troškovnika nije dostupno.');return}
  cloudStatus('Spremanje...');
  const {data,error}=await sb.from('troskovnici').insert({naziv,owner_id:currentUser.id,stanje}).select('id').single();
  if(error){cloudStatus('Greška: '+error.message);return}
- await refreshCloud();$('cloud-select').value=data.id;renderCloud();cloudStatus('Troškovnik je spremljen u oblak.')
+ await refreshCloud();$('cloud-select').value=data.id;renderCloud();activateCloudAutosave({id:data.id,owner_id:currentUser.id,naziv});cloudStatus('Troškovnik je spremljen u oblak. Automatsko spremanje uključeno.')
 };
 $('cloud-update').onclick=async()=>{
  const x=selectedCloud();if(!x)return;
+ if(cloudDirty&&activeCloudId&&x.id!==activeCloudId){cloudStatus('Najprije pričekaj automatsko spremanje otvorenog predmeta.');return}
  if(!confirm('Prepisati spremljeni troškovnik trenutnim stanjem?'))return;
  const naziv=$('cloud-name').value.trim()||x.naziv;
  const {error}=await sb.from('troskovnici').update({naziv,stanje:window.collectAppState()}).eq('id',x.id);
  if(error){cloudStatus('Greška: '+error.message);return}
- await refreshCloud();$('cloud-select').value=x.id;renderCloud();cloudStatus('Troškovnik je ažuriran.')
+ await refreshCloud();$('cloud-select').value=x.id;renderCloud();activateCloudAutosave(x);cloudStatus('Troškovnik je ažuriran.')
 };
 $('cloud-open').onclick=async()=>{
  const x=selectedCloud();if(!x)return;
  if(!confirm('Otvoriti odabrani troškovnik? Trenutni nespremljeni rad bit će zamijenjen.'))return;
  const {data,error}=await sb.from('troskovnici').select('stanje,naziv').eq('id',x.id).single();
  if(error){cloudStatus('Greška: '+error.message);return}
+ if(cloudDirty&&!confirm('Postoje nespremljene izmjene u oblaku. Odbaciti ih i otvoriti drugi predmet?'))return;
  if(!window.applyAppState?.(data.stanje)){cloudStatus('Nije moguće učitati stanje.');return}
- $('cloud-name').value=data.naziv;cloudStatus('Učitan: '+data.naziv)
+ $('cloud-name').value=data.naziv;activateCloudAutosave(x);cloudStatus('Učitan: '+data.naziv+' · automatsko spremanje uključeno.')
 };
 $('cloud-delete').onclick=async()=>{
  const x=selectedCloud();if(!x||!confirm('Trajno obrisati troškovnik '+x.naziv+' iz oblaka?'))return;
  const {error}=await sb.from('troskovnici').delete().eq('id',x.id);
  if(error){cloudStatus('Greška: '+error.message);return}
- await refreshCloud();cloudStatus('Troškovnik je obrisan.')
+ if(activeCloudId===x.id)stopCloudAutosave();await refreshCloud();cloudStatus('Troškovnik je obrisan.')
 };
 const originalUnlock=unlock;
 unlock=()=>{originalUnlock();refreshCloud()};
