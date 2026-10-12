@@ -1223,8 +1223,31 @@ details.card[open] .card-toggle-icon::before{content:"−"}
 body.cost-notice-open{overflow:hidden}
 @media print{#costNotice{display:none!important}body.cost-notice-open{overflow:visible}}
 </style>
-</head>
-<body>
+<style>
+html:not(.auth-approved) .wrap,html:not(.auth-approved) .preset-fab-wrap,html:not(.auth-approved) .request-codebook-fab-wrap {display:none!important}
+#auth-shell{max-width:480px;margin:7vh auto;padding:28px;border:1px solid #dce3ea;border-radius:16px;background:#fff;box-shadow:0 8px 30px #10284018;font-family:Inter,Arial,sans-serif}
+#auth-shell input{display:block;width:100%;padding:12px;margin:10px 0;border:1px solid #cbd5e1;border-radius:8px}
+#auth-shell button,#auth-admin button,#auth-toolbar button{padding:10px 12px;border:0;border-radius:8px;background:#155eef;color:white;margin:4px;cursor:pointer}
+#auth-shell .hint-msg{font-size:13px;color:#475569;line-height:1.5}
+#auth-toolbar{position:fixed;right:12px;top:10px;z-index:9998;background:#fff;padding:7px;border-radius:10px;box-shadow:0 3px 16px #0002}
+#auth-admin{position:fixed;inset:0;overflow:auto;z-index:30000;background:#f3f6f9;padding:24px;font-family:Inter,Arial,sans-serif}
+#auth-admin table{width:100%;border-collapse:collapse;background:white}#auth-admin td,#auth-admin th{padding:12px;border-bottom:1px solid #ddd;text-align:left}
+#auth-admin button:disabled{opacity:.35}
+@media print{#auth-toolbar,#auth-admin,#auth-shell{display:none!important}}
+</style></head>
+<body><section id="auth-shell">
+<h2>Automatski troškovnik</h2><p>Prijava i registracija korisnika</p>
+<div id="auth-form">
+<input id="auth-name" placeholder="Ime i prezime (samo za registraciju)" autocomplete="name">
+<input id="auth-email" type="email" placeholder="E-mail adresa" autocomplete="email">
+<input id="auth-password" type="password" placeholder="Lozinka" autocomplete="current-password">
+<button id="auth-login">Prijava</button><button id="auth-register">Registracija</button><button id="auth-forgot">Zaboravljena lozinka</button>
+</div>
+<p id="auth-message" class="hint-msg" role="status">Učitavanje...</p>
+<button id="auth-signout-wait" hidden>Odjava</button>
+</section>
+<div id="auth-toolbar" hidden><span id="auth-username"></span><button id="auth-admin-button" hidden>Administracija</button><button id="auth-signout">Odjava</button></div>
+<section id="auth-admin" hidden><h2>Administracija korisnika</h2><button id="auth-close-admin">Zatvori</button><button id="auth-reload-users">Osvježi</button><div id="auth-users"></div></section>
 
 <!-- ==================== APLIKACIJA ==================== -->
 <div class="wrap">
@@ -4474,5 +4497,62 @@ function toggleRequestCodebook(force){
 })();
 </script>
 
-</body>
+<script type="module">
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
+const sb=createClient('https://jegtseiwalmynkugadrr.supabase.co','sb_publishable_qtMML285ibxEJRaH8Wwj6Q_PEHUZJN7');
+const $=id=>document.getElementById(id);
+const message=text=>{$('auth-message').textContent=text};
+let currentUser=null,currentProfile=null;
+function lock(){document.documentElement.classList.remove('auth-approved');$('auth-shell').hidden=false;$('auth-toolbar').hidden=true;$('auth-admin').hidden=true}
+function unlock(){document.documentElement.classList.add('auth-approved');$('auth-shell').hidden=true;$('auth-toolbar').hidden=false;$('auth-username').textContent=currentProfile.full_name||currentUser.email;$('auth-admin-button').hidden=currentProfile.role!=='admin'}
+async function refreshAccess(){
+  lock();
+  const {data:{user},error}=await sb.auth.getUser();
+  if(error||!user){message('Prijavi se ili registriraj.');$('auth-signout-wait').hidden=true;return}
+  currentUser=user;$('auth-signout-wait').hidden=false;
+  if(!user.email_confirmed_at){message('Provjeri e-mail i potvrdi adresu prije korištenja aplikacije.');return}
+  const {data,error:profileError}=await sb.from('profiles').select('id,email,full_name,role,status').eq('id',user.id).single();
+  if(profileError){message('Ne mogu provjeriti pristup: '+profileError.message);return}
+  currentProfile=data;
+  if(data.status!=='approved'){message(data.status==='blocked'?'Administrator je blokirao pristup.':'E-mail je potvrđen. Čeka se odobrenje administratora.');return}
+  unlock();
+}
+$('auth-login').onclick=async()=>{
+ message('Prijava...');const {error}=await sb.auth.signInWithPassword({email:$('auth-email').value.trim(),password:$('auth-password').value});
+ if(error)message(error.message);else await refreshAccess()
+};
+$('auth-register').onclick=async()=>{
+ message('Registracija...');const {error}=await sb.auth.signUp({email:$('auth-email').value.trim(),password:$('auth-password').value,options:{data:{full_name:$('auth-name').value.trim()},emailRedirectTo:location.origin+location.pathname}});
+ message(error?error.message:'Ako je registracija prihvaćena, provjeri e-mail. Nakon potvrde administrator mora odobriti račun.')
+};
+$('auth-forgot').onclick=async()=>{
+ const email=$('auth-email').value.trim();if(!email){message('Unesi e-mail adresu.');return}
+ const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+ message(error?error.message:'Ako račun postoji, poslana je poruka za obnovu lozinke.')
+};
+async function logout(){await sb.auth.signOut();currentUser=null;currentProfile=null;await refreshAccess()}
+$('auth-signout').onclick=logout;$('auth-signout-wait').onclick=logout;
+async function loadUsers(){
+ const {data,error}=await sb.from('profiles').select('id,email,full_name,role,status,created_at').order('created_at',{ascending:false});
+ if(error){$('auth-users').textContent=error.message;return}
+ const table=document.createElement('table'),head=document.createElement('tr');
+ for(const name of ['Korisnik','Status','Uloga','Akcije']){const th=document.createElement('th');th.textContent=name;head.append(th)}table.append(head);
+ for(const u of data){
+  const tr=document.createElement('tr'),name=document.createElement('td');name.textContent=(u.full_name||'')+' — '+(u.email||'');tr.append(name);
+  for(const value of [u.status,u.role]){const td=document.createElement('td');td.textContent=value;tr.append(td)}
+  const td=document.createElement('td');
+  for(const [label,status,role] of [['Odobri','approved','user'],['Urednik','approved','editor'],['Administrator','approved','admin'],['Blokiraj','blocked',u.role]]){
+   const button=document.createElement('button');button.textContent=label;button.disabled=u.id===currentUser.id;
+   button.onclick=async()=>{if(!confirm('Promijeniti pristup za '+(u.email||u.id)+'?'))return;const {error}=await sb.rpc('admin_set_user_access',{target_user_id:u.id,new_status:status,new_role:role});if(error)alert(error.message);else await loadUsers()};
+   td.append(button)
+  }tr.append(td);table.append(tr)
+ }
+ $('auth-users').replaceChildren(table)
+}
+$('auth-admin-button').onclick=()=>{$('auth-admin').hidden=false;loadUsers()};
+$('auth-close-admin').onclick=()=>{$('auth-admin').hidden=true};
+$('auth-reload-users').onclick=loadUsers;
+sb.auth.onAuthStateChange(()=>{setTimeout(refreshAccess,0)});
+await refreshAccess();
+</script></body>
 </html>
