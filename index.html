@@ -1,0 +1,4478 @@
+<!DOCTYPE html>
+<!--
+  Automatski troškovnik priključka
+  Radna verzija v155
+  Kod organiziran radi lakšeg održavanja.
+  V175: Prihvaćanje uvodne napomene pamti se u pregledniku i ostaje nakon osvježavanja.
+  V174: Opis priključka za SKRO i KRO uključuje obveze investitora za zgradu.
+  V173: SKRO automatski dodaje ormar, polucilindar, ugradnju SKPMO i 2 m cijevi za uvlačenje.
+  V172: Uvodna važna napomena s obveznom potvrdom pri svakom otvaranju.
+  V171: KSVP fiksni trošak ovisi o faznosti: 1F = 245 €, 3F = 345 € (za poduzetništvo + PDV).
+  V170: Ispravljen obračun troška priključka prema vrsti zahtjeva (kW / stvarni / veći iznos / KSVP).
+  V155: Kontrola + / − za Dodatne uvjete koristi tamnosivu boju.
+  V156: Sve glavne kartice su sklopive i koriste tamnosivi + / − u zaobljenom kvadratiću.
+  V154: Sklopiva kartica Dodatni uvjeti koristi + za otvaranje i − za zatvaranje.
+  V153: Kartica Dodatni uvjeti može se sklopiti i proširiti.
+  V152: Dodatni uvjeti prikazuju se i za vrstu zahtjeva Povećanje snage elektrane.
+  V146: Dodatni uvjeti ovise isključivo o vrsti zahtjeva: prikazuju se za Kupac s vlastitom proizvodnjom i Kupac s vlastitom proizvodnjom i baterijskim spremnikom energije; za sve ostale vrste zahtjeva su prazni.
+  V145: Dodatni uvjeti generiraju se samo kada vrsta zahtjeva sadrži Kupac s vlastitom proizvodnjom i odabran je KSVP (sa ili bez baterije).
+  V144: Dodatni uvjeti automatski se generiraju za KSVP te KSVP s baterijom bez/za izolirani pogon.
+  V106: ZWM=AAA220000 = 1 h za KSVP bez izoliranog pogona; 16 h za KSVP za izolirani pogon.
+  V108: Vrsta zahtjeva 8 dopušta samo DA/Postojeći NN priključak; vrsta zahtjeva 9 samo KSVP opcije 3/4.
+  V141: Kupac s vlastitom proizvodnjom i/ili baterijom bez podataka o priključku koristi opis: Postojeći NN priključak. Parametrirati brojilo.
+   V140: Unesene su cijene za 20 stavki koje su prethodno bile bez cijene, uključujući betonske stupove, SKRO-1, SPMO, intervalno brojilo i NH osigurače.
+  V139: Dodani su NH (NV) 1 osigurači 63 A, 80 A i 100 A; automatski se dodaju po tri komada za svaki OMM u rasponima >33–43 kW, >43–55 kW i >55–69 kW.
+  V138: OMM iznad 50 kW s vlastitim SPMO-om više se ne ubraja u veličinu KPMO-a ili SKPMO-a; standardni ormar računa se samo za preostale OMM-e.
+  V137: Za svaki OMM Kućanstva ili Poduzetništva snage veće od 50 kW automatski se dodaju SPMO s ugrađenim SMT i kombi univerzalno intervalno 3f brojilo.
+  V136: Polje snage OMM-a nudi tipske snage, ali dopušta i vlastiti pozitivan unos; vlastita snaga ulazi u zbrojeve, obračun po kW i opće stavke po broju OMM-a.
+  V135: U sažetak su vraćeni trošak materijala bez PDV-a, s PDV-om i trošak po kW; priključna snaga ostaje zbroj novih OMM-a.
+  V134: U odjeljku 4. Sažetak prikazuje se samo priključna snaga, odnosno zbroj novih OMM-a.
+  V133: Naziv kartice skraćen je na Trošak po kW, a oznake snaga na Postojeća snaga i Nova snaga; formula i dalje koristi samo novu snagu.
+  V132: Snage postojećih i novih OMM-a prikazuju se odvojeno; obračun po kW koristi samo snagu novih OMM-a.
+  V131: Gumbi SAP PDF i Kopiraj u SAP premješteni su desno od naslova 3. Troškovnik.
+  V130: Dodana je opcija Postojeći međustup; opis priključka sada razlikuje postojeći od novopostavljenog međustupa.
+  V129: Materijal 0414030075 automatski se dodaje u količini 4 kada je aktivan bilo koji kabel 4x25 mm².
+  V128: Dodani su dinamički prijedlozi naziva OMM-a prema vrsti zahtjeva, statusu baterije i kategoriji OMM-a.
+  V127: Pravilo dugog opisa KSVP-a pojednostavljeno je na glavnu konfiguraciju; OMM kategorija i pomoćna polja više ga ne blokiraju.
+  V126: Bez odabranog ormara položaj ormara ostaje prazan, čime je uklonjena kontradikcija u pravilu opisa KSVP-a bez materijala.
+  V125: KSVP bez priključnog materijala koristi dugi opis postojećeg priključka za status DA i Postojeći NN priključak.
+  V124: Elektrana DA koristi klasični opis prema odabranim radovima; dugi opis postojećeg priključka ostaje samo za KSVP bez zadanih radova.
+  V123: Ispravljen je opis za status Postojeći NN priključak i njegovo automatsko osvježavanje nakon odabira.
+  V122: Ikone za kopiranje i brisanje OMM-a postavljene su na 15 px.
+  V121: Ikone za kopiranje i brisanje OMM-a smanjene su na 10 px.
+  V120: Dodane su ručke s 2 × 3 točkice za povlačenje OMM redaka; nakon premještanja redni brojevi automatski se obnavljaju.
+  V119: OMM tablica prilagođena je širini okvira bez vodoravnog pomicanja; stupci koriste postotni raspored.
+  V118: Poravnani su stupci, polja i unutarnji razmaci OMM tablice; broj OMM-a pomaknut je približno 7 mm udesno.
+  V117: Polje naziva OMM-a usklađeno je s poljem snage; ikone akcija su suptilnije, a brisanje koristi crveni X.
+  V116: Limit je povećan na 50 OMM-ova; dodani su naziv OMM-a te kopiranje i brisanje ikonama.
+  V115: Povećanje priključne snage bez kabela/ormara/međustupa -> opis: Postojeći NN priključak. Parametrirati brojilo.
+-->
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Automatski troškovnik priključka</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%230b1f44%22/%3E%3Cpath d=%22M37 5 15 36h15l-3 23 22-33H34z%22 fill=%22white%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box} body{margin:0;background:#f3f6f9;color:#1e293b;font-family:Arial,Helvetica,sans-serif}
+.wrap{max-width:1500px;margin:auto;padding:24px}
+header{background:linear-gradient(135deg,#17365d,#365f91);color:white;padding:26px 30px;border-radius:16px;margin-bottom:18px;box-shadow:0 8px 26px rgba(23,54,93,.18)}
+header h1{margin:3px 0 6px;font-size:30px;letter-spacing:-.3px}
+header p{margin:0;opacity:.88}
+.header-main{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.header-eyebrow{font-size:11px;font-weight:700;letter-spacing:1.5px;opacity:.72}
+.header-subtitle{font-size:14px;opacity:.82}
+.header-badge{border:1px solid rgba(255,255,255,.38);background:rgba(255,255,255,.1);padding:10px 14px;border-radius:9px;font-size:12px;font-weight:700;letter-spacing:1px;white-space:nowrap}
+.status-bar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+margin:14px 0 18px;padding:11px 16px;background:#e8f1fa;border:1px solid #cbdbea;
+border-radius:10px;color:#17365d;font-weight:700;font-size:14px}
+.status-bar .dot{color:#94a3b8;font-weight:400}
+.card{background:#fff;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 4px 16px rgba(15,23,42,.08)}
+h2{margin:0 0 16px;color:#17365d;font-size:20px}.item-count{font-weight:400;color:#64748b;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:13px}
+.connection-layout{max-width:none;margin:0;width:100%}
+.preset-box{display:grid;grid-template-columns:minmax(320px,1fr) auto;gap:12px;align-items:end;
+padding:14px 16px;margin-bottom:18px;background:#eef4fa;border:1px solid #d5e3f0;border-radius:10px}
+.preset-box .field{margin:0}
+.preset-box button{height:40px;white-space:nowrap}
+.connection-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:100%}
+.cable-stack{display:contents}
+.field label{display:block;font-size:12px;font-weight:700;color:#475569;margin:0 0 5px}
+.field input,.field select{width:100%;height:40px;border:1px solid #cbd5e1;border-radius:8px;padding:0 10px;background:white;color:#0f172a}
+.field input:focus,.field select:focus,.num:focus{outline:2px solid #93c5fd;border-color:#3b82f6}
+.field input:disabled{background:#e9eef3;color:#94a3b8;cursor:not-allowed}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.toolbar.actions-right{justify-content:flex-end;width:100%}
+.cost-section-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
+.card .cost-section-header h2{margin:0!important}
+.cost-header-actions{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
+.btn{background:#17365d;color:white}.btn2{background:#e8f1fa;color:#17365d}.btn3{background:#198754;color:white}.danger{background:#fee2e2;color:#991b1b}
+.omm-table,.cost-table{width:100%;border-collapse:collapse}
+.omm-table th,.cost-table th{background:#17365d;color:#fff;padding:10px;text-align:left;font-size:13px}
+.omm-table th:last-child,.omm-table td:last-child{text-align:center;width:150px}
+.omm-table td,.cost-table td{padding:8px;border-bottom:1px solid #e5e7eb;vertical-align:middle}
+.omm-table tr:hover td,.cost-table tr:hover td{background:#f8fafc}
+.table-wrap{overflow:auto;border:1px solid #e2e8f0;border-radius:10px}
+.num{width:92px;height:34px;border:1px solid #cbd5e1;border-radius:6px;padding:0 7px}
+.num.small{width:78px}
+.money{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.code{font-family:Consolas,monospace;font-weight:700;white-space:nowrap;color:#17365d}
+.desc{min-width:380px}.note{min-width:180px;color:#64748b;font-size:12px}
+.auto{font-weight:700;color:#0369a1}.final{font-weight:700;color:#166534}
+.active-row td{background:#f0fdf4!important}.manual-row td{background:#fff7cc!important}
+.manual-badge{display:inline-block;margin-left:8px;padding:2px 7px;border-radius:999px;background:#f59e0b;color:#fff;font-size:10px;font-weight:700;vertical-align:middle}
+.badge{display:inline-flex;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:700;background:#e8f1fa;color:#17365d}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sum{border:1px solid #dbe4ee;border-radius:11px;padding:14px;background:#f8fafc}
+.sum span{display:block;color:#64748b;font-size:12px;margin-bottom:5px}.sum strong{font-size:19px;color:#17365d}
+.sum.primary{background:#17365d}.sum.primary span,.sum.primary strong{color:#fff}
+.switchline{display:flex;align-items:center;gap:9px;font-size:13px;color:#475569;margin-top:12px}.table-filters{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.hint{background:#eef4fa;border-left:4px solid #365f91;padding:12px 14px;border-radius:8px;line-height:1.5;font-size:13px;color:#334155;margin-bottom:14px}
+.warn{background:#fff7ed;border-left-color:#f97316}
+.smalltext{font-size:12px;color:#64748b}
+.omm-warning{display:none;margin-top:5px;color:#b91c1c;font-size:11px;font-weight:700}
+.omm-warning.show{display:block}
+.ommPower.invalid{border-color:#dc2626!important;background:#fef2f2!important}
+.app-footer{margin-top:20px;padding:18px 22px;border-top:1px solid #dbe4ee;color:#64748b;font-size:12px}
+.footer-row{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;white-space:nowrap}
+.app-footer strong{color:#17365d;font-size:13px}
+.footer-separator{color:#cbd5e1}
+.footer-version{color:#94a3b8;font-size:11px}
+@media(max-width:800px){.footer-row{flex-wrap:wrap;justify-content:center;white-space:normal;text-align:center}}
+.hidden{display:none!important}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.connection-columns{grid-template-columns:repeat(2,1fr)}.summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.wrap{padding:9px}.preset-box{grid-template-columns:1fr}.header-main{align-items:flex-start}.header-badge{display:none}header h1{font-size:24px}.grid,.connection-columns,.summary{grid-template-columns:1fr}header{border-radius:10px}.card{padding:12px}}
+@media print{body{background:white}.toolbar,.no-print,.removeOmm,.switchline{display:none!important}.card{box-shadow:none;border:1px solid #ddd}.wrap{max-width:none;padding:0}header{box-shadow:none}}
+.connection-columns{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:16px 24px !important}
+
+.preset-fab-wrap{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  z-index:9999;
+}
+.preset-fab{
+  width:56px;
+  height:56px;
+  border:0;
+  border-radius:50%;
+  background:#17365d;
+  color:#fff;
+  font-size:25px;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,.24);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+.preset-fab:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,.28);
+}
+.preset-panel{
+  position:absolute;
+  right:0;
+  bottom:68px;
+  width:min(390px,calc(100vw - 28px));
+  background:#fff;
+  border:1px solid #d7dee7;
+  border-radius:12px;
+  padding:14px;
+  box-shadow:0 10px 32px rgba(0,0,0,.22);
+  display:none;
+}
+.preset-panel.open{display:block}
+.preset-panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+  color:#17365d;
+}
+.preset-close{
+  border:0;
+  background:transparent;
+  font-size:25px;
+  line-height:1;
+  cursor:pointer;
+  color:#666;
+}
+.preset-panel .field{margin:0 0 10px}
+.preset-panel select{width:100%}
+.preset-clear{width:100%;margin-top:10px}
+.preset-divider{height:1px;background:#e5e7eb;margin:12px 0}
+.preset-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.preset-actions{grid-template-columns:1fr}}
+@media(max-width:620px){
+  .preset-fab-wrap{right:14px;bottom:14px}
+  .preset-fab{width:52px;height:52px}
+  .preset-panel{bottom:62px}
+}
+
+
+.logic-warnings{margin-top:12px;padding:11px 13px;border:1px solid #f59e0b;background:#fffbeb;color:#92400e;border-radius:9px;font-size:13px;line-height:1.45}
+.logic-warnings strong{display:block;margin-bottom:4px}.logic-warnings ul{margin:4px 0 0 18px;padding:0}.logic-version{font-weight:700}.app-footer,footer{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}.footer-main{color:#475467!important;font-weight:500!important;line-height:1.5}.footer-main strong{font-weight:700!important}
+.footer-right{margin-left:auto;font-weight:600;white-space:nowrap}
+
+/* =========================================================
+   V74 — NOVI DIZAJN
+   Funkcionalna logika ostaje nepromijenjena.
+   ========================================================= */
+
+:root{
+  --v100-bg:#eef2f6;
+  --v100-surface:#ffffff;
+  --v100-surface-2:#f8fafc;
+  --v100-text:#172033;
+  --v100-muted:#667085;
+  --v100-line:#dce3ea;
+  --v100-primary:#155eef;
+  --v100-primary-dark:#0b4bd4;
+  --v100-primary-soft:#eaf2ff;
+  --v100-green:#18864b;
+  --v100-green-soft:#eaf8f0;
+  --v100-red:#c9362b;
+  --v100-red-soft:#fff0ef;
+  --v100-amber:#c77800;
+  --v100-amber-soft:#fff7e6;
+  --v100-radius:14px;
+  --v100-shadow:0 8px 30px rgba(16,24,40,.07);
+}
+
+*{box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:"Inter",Arial,sans-serif!important;
+  background:var(--v100-bg)!important;
+  color:var(--v100-text)!important;
+  margin:0!important;
+}
+
+.wrap,.container{
+  max-width:1480px!important;
+  margin:0 auto!important;
+  padding:24px 28px 40px!important;
+}
+
+/* ---------- Glavno zaglavlje ---------- */
+header{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(120deg,#0b1f44 0%,#123c7b 55%,#155eef 100%)!important;
+  border-radius:20px!important;
+  padding:28px 32px!important;
+  margin-bottom:22px!important;
+  box-shadow:0 14px 36px rgba(11,31,68,.18)!important;
+}
+
+header::after{
+  content:"";
+  position:absolute;
+  width:240px;
+  height:240px;
+  right:-70px;
+  top:-95px;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+}
+
+header h1{
+  position:relative;
+  z-index:1;
+  color:#fff!important;
+  font-size:30px!important;
+  font-weight:800!important;
+  letter-spacing:-.6px!important;
+  margin:0!important;
+}
+
+/* ---------- Kartice / sekcije ---------- */
+.card{
+  background:var(--v100-surface)!important;
+  border:1px solid var(--v100-line)!important;
+  border-radius:var(--v100-radius)!important;
+  box-shadow:var(--v100-shadow)!important;
+  padding:22px!important;
+  margin-bottom:18px!important;
+}
+
+.card h2{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin:0 0 20px!important;
+  color:var(--v100-text)!important;
+  font-size:19px!important;
+  font-weight:750!important;
+  letter-spacing:-.2px!important;
+}
+
+.card h2::before{
+  content:"";
+  display:block;
+  width:5px;
+  height:24px;
+  border-radius:999px;
+  background:var(--v100-primary);
+}
+
+/* ---------- Polja ---------- */
+.connection-layout,
+.connection-columns,
+.grid{
+  gap:14px 18px!important;
+}
+
+.field{
+  min-width:0;
+}
+
+.field label{
+  display:block!important;
+  margin-bottom:7px!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  color:#475467!important;
+  letter-spacing:.02em!important;
+}
+
+.field input,
+.field select,
+input.num,
+input.decimal-input,
+select{
+  width:100%;
+  min-height:42px!important;
+  border:1px solid #cfd8e3!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:var(--v100-text)!important;
+  padding:9px 11px!important;
+  font-family:"Inter",Arial,sans-serif!important;
+  font-size:13px!important;
+  outline:none!important;
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease!important;
+}
+
+.field input:focus,
+.field select:focus,
+input.num:focus,
+input.decimal-input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--v100-primary)!important;
+  box-shadow:0 0 0 3px rgba(21,94,239,.12)!important;
+}
+
+input:disabled,
+select:disabled{
+  background:#f2f4f7!important;
+  color:#98a2b3!important;
+  cursor:not-allowed;
+}
+
+/* ---------- Gumbi ---------- */
+button,
+.btn,
+.btn2,
+.btn3,
+.danger{
+  font-family:"Inter",Arial,sans-serif!important;
+  font-weight:700!important;
+  border-radius:10px!important;
+  min-height:38px!important;
+  padding:9px 14px!important;
+  border:1px solid transparent!important;
+  cursor:pointer!important;
+  transition:transform .12s ease,box-shadow .12s ease,background .12s ease!important;
+}
+
+button:hover{
+  transform:translateY(-1px);
+}
+
+.btn{
+  background:var(--v100-primary)!important;
+  color:#fff!important;
+  box-shadow:0 4px 12px rgba(21,94,239,.18)!important;
+}
+
+.btn:hover{background:var(--v100-primary-dark)!important}
+
+.btn2{
+  background:#fff!important;
+  color:#344054!important;
+  border-color:#d0d5dd!important;
+}
+
+.btn2:hover{
+  background:#f9fafb!important;
+}
+
+.btn3{
+  background:var(--v100-green)!important;
+  color:#fff!important;
+  box-shadow:0 4px 12px rgba(24,134,75,.16)!important;
+}
+
+.danger{
+  background:var(--v100-red-soft)!important;
+  color:var(--v100-red)!important;
+  border-color:#f4c7c3!important;
+}
+
+.toolbar{
+  gap:9px!important;
+}
+
+/* ---------- OMM ---------- */
+.omm-table,
+.cost-table{
+  border-collapse:separate!important;
+  border-spacing:0!important;
+  width:100%!important;
+}
+
+.table-wrap{
+  overflow:auto!important;
+  border:1px solid var(--v100-line)!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.omm-table th,
+.cost-table th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:#132c54!important;
+  color:#fff!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  letter-spacing:.03em!important;
+  text-transform:none!important;
+  padding:11px 10px!important;
+  border-bottom:0!important;
+}
+
+.omm-table td,
+.cost-table td{
+  background:#fff;
+  padding:9px 10px!important;
+  border-bottom:1px solid #edf0f3!important;
+  color:#344054!important;
+  font-size:12px!important;
+  vertical-align:middle!important;
+}
+
+.omm-table tbody tr:hover td,
+.cost-table tbody tr:hover td{
+  background:#f8fbff!important;
+}
+
+.omm-table tbody tr:last-child td,
+.cost-table tbody tr:last-child td{
+  border-bottom:0!important;
+}
+
+.omm-table{
+  width:100%!important;
+  min-width:0!important;
+  table-layout:fixed!important;
+}
+.omm-table th,
+.omm-table td{
+  padding:9px 8px!important;
+}
+.omm-table th:first-child,
+.omm-table td.ommIndexCell{
+  padding-left:30px!important;
+  text-align:left!important;
+}
+.omm-table td.ommIndexCell{
+  position:relative!important;
+  font-weight:700!important;
+  color:#667085!important;
+}
+.omm-drag-handle{
+  position:absolute;
+  left:7px;
+  top:50%;
+  transform:translateY(-50%);
+  display:grid;
+  grid-template-columns:repeat(2,3px);
+  grid-template-rows:repeat(3,3px);
+  gap:3px;
+  padding:6px 5px;
+  border-radius:6px;
+  opacity:0;
+  cursor:grab;
+  transition:opacity .14s ease,background .14s ease;
+  user-select:none;
+}
+.omm-drag-handle i{
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:#98a2b3;
+  pointer-events:none;
+}
+.omm-table tbody tr:hover .omm-drag-handle,
+.omm-table tbody tr:focus-within .omm-drag-handle,
+.omm-drag-handle:focus-visible{
+  opacity:1;
+}
+.omm-drag-handle:hover{
+  background:#f2f4f7;
+}
+.omm-drag-handle:active{
+  cursor:grabbing;
+}
+.omm-table tbody tr.omm-dragging td{
+  background:#eef4ff!important;
+  opacity:.65;
+}
+.omm-table tbody tr.omm-dragging .omm-drag-handle{
+  opacity:1;
+  cursor:grabbing;
+}
+.omm-table input[type="text"],
+.omm-table select{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+}
+.omm-table th:nth-child(5),
+.omm-table td:nth-child(5),
+.omm-table th:nth-child(6),
+.omm-table td:nth-child(6){
+  text-align:center!important;
+}
+.omm-table th{
+  overflow-wrap:anywhere;
+}
+.omm-table + *{
+  max-width:100%;
+}
+
+.omm-actions{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  white-space:nowrap;
+}
+.omm-icon-btn{
+  width:28px!important;
+  min-width:28px!important;
+  min-height:28px!important;
+  padding:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:0!important;
+  border-radius:7px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:15px!important;
+  font-weight:600!important;
+  line-height:1!important;
+}
+.omm-copy-btn{
+  color:#667085!important;
+}
+.omm-copy-btn:hover{
+  background:#f2f4f7!important;
+  color:#344054!important;
+}
+.omm-delete-btn{
+  color:#d92d20!important;
+  font-size:15px!important;
+  font-weight:400!important;
+}
+.omm-delete-btn:hover{
+  background:#fff1f0!important;
+  color:#b42318!important;
+}
+
+/* ---------- Troškovnik ---------- */
+.auto{
+  color:#155eef!important;
+  font-weight:750!important;
+}
+
+.final{
+  color:#137a42!important;
+  font-weight:800!important;
+}
+
+.money{
+  white-space:nowrap;
+}
+
+.manual-row td{
+  background:#fff8df!important;
+}
+
+.manual-row:hover td{
+  background:#fff3c4!important;
+}
+
+.manual-badge{
+  background:#f79009!important;
+  color:#fff!important;
+  border-radius:999px!important;
+  font-size:9px!important;
+  padding:3px 7px!important;
+}
+
+.active-row td{
+  background:#f2fbf6!important;
+}
+
+.table-filters{
+  display:flex!important;
+  align-items:center!important;
+  gap:12px 22px!important;
+  flex-wrap:wrap!important;
+  background:var(--v100-surface-2)!important;
+  border:1px solid var(--v100-line)!important;
+  border-radius:11px!important;
+  padding:10px 12px!important;
+  margin-bottom:12px!important;
+}
+
+.switchline{
+  margin:0!important;
+  font-size:12px!important;
+  font-weight:600!important;
+}
+
+/* ---------- Upozorenja ---------- */
+.logic-warnings{
+  background:var(--v100-amber-soft)!important;
+  color:#8a4b00!important;
+  border:1px solid #f5d28f!important;
+  border-radius:11px!important;
+  padding:12px 14px!important;
+}
+
+/* ---------- Sažetak ---------- */
+.summary{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:12px!important;
+}
+
+.sum{
+  background:var(--v100-surface-2)!important;
+  border:1px solid var(--v100-line)!important;
+  border-radius:12px!important;
+  padding:15px!important;
+  min-height:88px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+}
+
+.sum span{
+  color:var(--v100-muted)!important;
+  font-size:11px!important;
+  font-weight:650!important;
+}
+
+.sum strong{
+  margin-top:8px!important;
+  color:var(--v100-text)!important;
+  font-size:20px!important;
+  font-weight:800!important;
+}
+
+.sum.primary{
+  background:linear-gradient(135deg,#edf4ff,#f6f9ff)!important;
+  border-color:#c9dbff!important;
+}
+
+.sum.primary strong{
+  color:var(--v100-primary)!important;
+}
+
+.omm-power-summary{
+  display:flex;
+  align-items:center;
+  gap:8px 18px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.omm-power-summary span{
+  display:inline-flex;
+  align-items:baseline;
+  gap:5px;
+}
+
+.omm-power-summary .new-power strong{
+  color:var(--v100-primary);
+}
+
+/* ---------- Opis priključka ---------- */
+#connectionDescription,
+#additionalConditions{
+  width:100%!important;
+  min-height:190px!important;
+  border:1px solid #cfd8e3!important;
+  border-radius:12px!important;
+  background:#fbfcfe!important;
+  color:#344054!important;
+  padding:14px!important;
+  font-family:"Inter",Arial,sans-serif!important;
+  font-size:13px!important;
+  line-height:1.65!important;
+}
+
+/* ---------- Floating tipski priključci ---------- */
+.preset-fab-wrap{
+  right:24px!important;
+  bottom:24px!important;
+}
+
+.preset-fab{
+  width:58px!important;
+  height:58px!important;
+  background:#0b1f44!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 10px 28px rgba(11,31,68,.28)!important;
+}
+
+.preset-panel{
+  width:min(420px,calc(100vw - 32px))!important;
+  border-radius:16px!important;
+  border:1px solid var(--v100-line)!important;
+  box-shadow:0 18px 45px rgba(16,24,40,.18)!important;
+  padding:16px!important;
+}
+
+.preset-panel-head{
+  padding-bottom:10px!important;
+  border-bottom:1px solid #edf0f3!important;
+}
+
+/* ---------- Footer ---------- */
+.app-footer{
+  background:transparent!important;
+  border-top:1px solid #ccd5df!important;
+  padding:16px 4px 2px!important;
+  margin-top:26px!important;
+  color:#667085!important;
+  font-size:11px!important;
+}
+
+.logic-version{
+  font-weight:650!important;
+}
+
+.footer-right{
+  color:#475467!important;
+}
+
+/* ---------- Scrollbar ---------- */
+.table-wrap::-webkit-scrollbar{height:10px;width:10px}
+.table-wrap::-webkit-scrollbar-thumb{background:#c9d2dd;border-radius:999px}
+.table-wrap::-webkit-scrollbar-track{background:#f2f4f7}
+
+/* ---------- Responsive ---------- */
+@media(max-width:1100px){
+  .summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+@media(max-width:760px){
+  .wrap,.container{padding:12px!important}
+  header{border-radius:14px!important;padding:22px!important}
+  header h1{font-size:24px!important}
+  .card{padding:15px!important;border-radius:12px!important}
+  .connection-columns,.grid{grid-template-columns:1fr!important}
+  .summary{grid-template-columns:1fr!important}
+  .toolbar.actions-right{justify-content:stretch!important}
+  .toolbar.actions-right button{flex:1 1 auto!important}
+  .cost-section-header{align-items:stretch;flex-direction:column}
+  .cost-header-actions{justify-content:flex-end}
+  .cost-header-actions button{flex:1 1 auto}
+}
+
+@media print{
+  body{background:#fff!important}
+  .card{box-shadow:none!important}
+}
+
+
+.manual-comment{
+  width:100%;
+  min-width:170px;
+  min-height:36px!important;
+  border:1px solid #d0d5dd!important;
+  border-radius:9px!important;
+  padding:7px 9px!important;
+  font-size:11px!important;
+  background:#fff!important;
+  color:#344054!important;
+}
+.manual-comment:disabled{
+  background:#f2f4f7!important;
+  color:#98a2b3!important;
+  cursor:not-allowed!important;
+}
+body.hide-prices .price-col,
+body.hide-prices .price-summary{
+  display:none!important;
+}
+
+
+.material-search-wrap{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex:1 1 100%;
+}
+.material-search{
+  flex:1 1 auto;
+  min-width:260px;
+  min-height:40px;
+  border:1px solid #d0d5dd;
+  border-radius:10px;
+  padding:8px 11px;
+  font-family:"Inter",Arial,sans-serif;
+  font-size:12px;
+  outline:none;
+}
+.material-search:focus{
+  border-color:#155eef;
+  box-shadow:0 0 0 3px rgba(21,94,239,.12);
+}
+.footer-tools{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  width:100%;
+  margin-bottom:8px;
+}
+.import-backup-label{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+@media(max-width:760px){
+  .material-search-wrap{flex-direction:column;align-items:stretch}
+  .material-search{min-width:0;width:100%}
+  .footer-tools{flex-direction:column}
+}
+
+
+.app-footer{
+  width:100%!important;
+  max-width:none!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:18px 8px 4px!important;
+  margin-top:28px!important;
+  border-top:1px solid #cbd3dc!important;
+  background:transparent!important;
+}
+
+.footer-main{
+  width:100%!important;
+  display:block!important;
+  text-align:center!important;
+  font-family:"Inter",Arial,sans-serif!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  color:#667085!important;
+  line-height:1.55!important;
+  letter-spacing:.01em!important;
+}
+
+.footer-main strong{
+  font-family:inherit!important;
+  font-size:inherit!important;
+  font-weight:inherit!important;
+  color:inherit!important;
+}
+
+
+.app-footer{
+  width:100%!important;
+  max-width:none!important;
+  display:block!important;
+  padding:18px 8px 4px!important;
+  margin-top:28px!important;
+  border-top:1px solid #cbd3dc!important;
+  background:transparent!important;
+}
+.footer-main{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  align-items:center!important;
+  gap:18px!important;
+  font-family:"Inter",Arial,sans-serif!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  color:#667085!important;
+  line-height:1.5!important;
+}
+.footer-left{text-align:left!important}
+.footer-note{
+  display:block;
+  margin-top:2px;
+}
+.footer-center{text-align:center!important}
+.footer-right-v100{text-align:right!important}
+.footer-feedback{
+  display:inline-block;
+  margin-top:4px;
+  color:#155eef!important;
+  font-weight:700!important;
+  text-decoration:none!important;
+}
+.footer-feedback:hover{text-decoration:underline!important}
+.footer-feedback:focus-visible{
+  outline:2px solid #155eef;
+  outline-offset:3px;
+  border-radius:2px;
+}
+@media(max-width:900px){
+  .footer-main{
+    grid-template-columns:1fr!important;
+    gap:5px!important;
+  }
+  .footer-left,.footer-center,.footer-right-v100{text-align:left!important}
+}
+
+
+.footer-tools{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:10px!important;
+  margin:0 0 28px 0!important;
+  padding:0!important;
+}
+
+.footer-tools .btn2,
+.footer-tools .import-backup-label{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:145px!important;
+  min-height:40px!important;
+  margin:0!important;
+  padding:9px 14px!important;
+  border:1px solid #cfd8e3!important;
+  border-radius:10px!important;
+  background:#ffffff!important;
+  color:#475467!important;
+  font-family:"Inter",Arial,sans-serif!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  box-shadow:0 2px 6px rgba(16,24,40,.04)!important;
+  cursor:pointer!important;
+}
+
+.footer-tools .btn2:hover,
+.footer-tools .import-backup-label:hover{
+  background:#f8fafc!important;
+  border-color:#aeb9c6!important;
+}
+
+.app-footer{
+  padding-top:22px!important;
+}
+
+@media(max-width:760px){
+  .footer-tools{
+    align-items:stretch!important;
+    margin-bottom:24px!important;
+  }
+  .footer-tools .btn2,
+  .footer-tools .import-backup-label{
+    width:100%!important;
+  }
+}
+
+.copy-material-btn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:20px!important;
+  min-width:20px!important;
+  height:20px!important;
+  min-height:20px!important;
+  padding:0!important;
+  margin:0 0 0 auto!important;
+  background:transparent!important;
+  color:#667085!important;
+  border:0!important;
+  border-radius:4px!important;
+  box-shadow:none!important;
+  font-size:11px!important;
+  line-height:1!important;
+}
+.copy-material-btn:hover{background:#f2f4f7!important;color:#344054!important;transform:none!important}
+.code-with-copy{display:flex;align-items:center;width:100%;gap:6px;white-space:nowrap}
+
+
+/* V100 — klikabilni sažetak automatskih i ručnih stavki */
+#activeItemCount{display:inline-flex;align-items:center;gap:3px;flex-wrap:wrap}
+.count-filter{
+  appearance:none!important;
+  border:0!important;
+  background:transparent!important;
+  min-height:0!important;
+  padding:1px 3px!important;
+  margin:0!important;
+  font:inherit!important;
+  font-weight:700!important;
+  color:#155eef!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+  border-radius:5px!important;
+}
+.count-filter:hover{
+  background:#eaf2ff!important;
+  transform:none!important;
+}
+.count-manual{color:#c77800!important}
+.count-manual:hover{background:#fff7e6!important}
+.count-auto{font-weight:650;color:#667085}
+
+
+/* V100 — Undo i spremljeni predmeti */
+.project-tools{
+  display:grid;
+  grid-template-columns:auto auto minmax(240px,1fr) auto auto;
+  gap:8px;
+  align-items:center;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid #edf0f3;
+}
+.saved-project-select{
+  min-height:38px!important;
+  width:100%;
+}
+.undo-btn{
+  min-width:108px;
+}
+.undo-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed!important;
+  transform:none!important;
+}
+@media(max-width:820px){
+  .project-tools{grid-template-columns:1fr 1fr}
+  .saved-project-select{grid-column:1/-1}
+}
+
+
+/* V100 — sažetak troškovnika ostaje uz naslov */
+.card h2:has(#activeItemCount){
+  flex-wrap:nowrap!important;
+}
+#activeItemCount{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:3px!important;
+  flex-wrap:nowrap!important;
+  white-space:nowrap!important;
+}
+@media(max-width:760px){
+  .card h2:has(#activeItemCount){
+    flex-wrap:wrap!important;
+  }
+  #activeItemCount{
+    flex-wrap:wrap!important;
+    white-space:normal!important;
+  }
+}
+
+
+/* V100 — brzi +/- ručni unos količine */
+.qty-stepper{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  white-space:nowrap;
+}
+.qty-stepper .decimal-input{
+  width:62px!important;
+  min-width:62px!important;
+  text-align:center!important;
+}
+.qty-step-btn{
+  width:24px!important;
+  height:24px!important;
+  min-width:24px!important;
+  min-height:24px!important;
+  padding:0!important;
+  margin:0!important;
+  border:1px solid #d0d5dd!important;
+  border-radius:6px!important;
+  background:#fff!important;
+  color:#475467!important;
+  font-size:15px!important;
+  font-weight:700!important;
+  line-height:20px!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+}
+.qty-step-btn:hover{
+  background:#f2f4f7!important;
+  border-color:#98a2b3!important;
+  transform:none!important;
+}
+
+
+/* V100 — iskop se uređuje u metrima, a kubikaža se prikazuje informativno */
+.excavation-volume{
+  display:inline-block;
+  margin-left:4px;
+  color:#667085;
+  font-size:10px;
+  font-weight:600;
+  white-space:nowrap;
+}
+
+/* V158 — sve kartice sklopive; razmak zaglavlja vraćen na mjeru iz v155 */
+details.card > summary::-webkit-details-marker{display:none}
+details.card > summary::marker{content:""}
+details.card > summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+details.card > summary > h2{margin:0!important}
+details.card[open] > summary{margin-bottom:14px!important}
+.card-toggle-icon{
+  width:30px!important;
+  min-width:30px!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 30px!important;
+  border:1px solid #cfd8e3!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:#475467!important;
+  font-size:20px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  box-shadow:0 1px 3px rgba(16,24,40,.06)!important;
+}
+details.card > summary:hover .card-toggle-icon{
+  background:#f8fafc!important;
+  border-color:#aeb9c6!important;
+}
+.card-toggle-icon::before{content:"+"}
+details.card[open] .card-toggle-icon::before{content:"−"}
+
+</style>
+<style>#plant:disabled{background:#f2f4f7!important;color:#667085!important;cursor:not-allowed!important}
+/* V166 — Šifrarnik vrste zahtjeva */
+.request-codebook-fab-wrap{position:fixed;right:94px;bottom:24px;z-index:9999}
+.request-codebook-fab{width:58px!important;height:58px!important;min-width:58px!important;padding:0!important;border-radius:50%!important;background:#fff!important;color:#0b1f44!important;border:1px solid #cfd8e3!important;box-shadow:0 10px 28px rgba(11,31,68,.18)!important;font-size:23px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.request-codebook-panel{position:absolute;right:0;bottom:70px;width:min(900px,calc(100vw - 32px));max-height:min(70vh,650px);overflow:auto;background:#fff;border:1px solid var(--v100-line);border-radius:16px;padding:16px;box-shadow:0 18px 45px rgba(16,24,40,.18);display:none}
+.request-codebook-panel.open{display:block}
+.request-codebook-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid #edf0f3;color:#172033}
+.request-codebook-close{width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important;padding:0!important;background:transparent!important;color:#667085!important;border:0!important;font-size:24px!important;box-shadow:none!important}
+.request-codebook-table{width:100%;border-collapse:collapse;font-size:12px}
+.request-codebook-table th{background:#132c54;color:#fff;text-align:left;padding:10px}
+.request-codebook-table td{padding:10px;border-bottom:1px solid #edf0f3;vertical-align:top;line-height:1.45}
+.request-codebook-table tr:last-child td{border-bottom:0}
+.request-codebook-table td:first-child{font-weight:700}
+.request-codebook-table td:nth-child(2){font-weight:650}
+.request-codebook-table strong{font-weight:800}
+@media(max-width:620px){.request-codebook-fab-wrap{right:78px;bottom:14px}.request-codebook-fab{width:52px!important;height:52px!important;min-width:52px!important}.request-codebook-panel{position:fixed;left:14px;right:14px;bottom:78px;width:auto;max-height:72vh}.request-codebook-table{min-width:720px}}
+@media print{.request-codebook-fab-wrap{display:none!important}}
+
+/* V168 — plutajuće ikone kao kockice, jedna ispod druge */
+.preset-fab-wrap{right:24px!important;bottom:94px!important}
+.request-codebook-fab-wrap{right:24px!important;bottom:24px!important}
+.preset-fab,.request-codebook-fab{border-radius:12px!important;width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important}
+@media(max-width:620px){
+  .preset-fab-wrap{right:14px!important;bottom:80px!important}
+  .request-codebook-fab-wrap{right:14px!important;bottom:14px!important}
+  .preset-fab,.request-codebook-fab{width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important}
+}
+</style>
+<!-- V165: Posebni uvjeti automatski uklanjaju sve prazne retke, uključujući spremljeni sadržaj iz localStoragea. -->
+<style>
+/* V172: Uvodna napomena prije korištenja troškovnika. */
+#costNotice{padding:0;border:1px solid #d9e2ef;border-radius:15px;width:min(460px,calc(100vw - 28px));max-height:calc(100dvh - 28px);background:#fff;color:#182235;box-shadow:0 24px 80px #0f172a55;font-family:Arial,Helvetica,sans-serif;overflow:auto}
+#costNotice::backdrop{background:rgba(15,23,42,.56);backdrop-filter:blur(4px)}
+#costNotice .notice-head{display:flex;align-items:center;gap:13px;padding:16px;background:linear-gradient(115deg,#1e3c69,#2854a2);color:white}
+#costNotice .notice-icon{display:grid;place-items:center;flex-shrink:0;width:38px;height:38px;background:#ffffff24;border-radius:9px}
+#costNotice h2{font-size:16px;margin:0;color:inherit;line-height:1.4}
+#costNotice .notice-body{padding:18px 20px 19px;display:grid;gap:14px}
+#costNotice .notice-box{display:flex;gap:12px;padding:13px 14px;border:1px solid #f1cb68;border-left:3px solid #ee9500;border-radius:6px;background:#fffbec;font-size:13px;line-height:1.8}
+#costNotice .notice-box svg{flex-shrink:0;margin-top:3px;color:#e58a00}
+#costNotice .notice-box p{margin:0}
+#costNotice .notice-info{background:#eef3fc;border-color:#c7d5f3;border-left-color:#4d82f5}
+#costNotice .notice-info svg{color:#2854a2}
+#costNotice .notice-check{display:flex;align-items:flex-start;gap:9px;font-size:12px;font-weight:400;line-height:1.7;color:#4a576d;cursor:pointer}
+#costNotice .notice-check input{appearance:auto;flex:0 0 15px;width:15px;height:15px;margin:3px 0 0;accent-color:#2854a2}
+#costNotice .notice-footer{display:flex;justify-content:flex-end;padding:13px 18px;background:#f7f9fd;border-top:1px solid #d9e2ef}
+#costNotice .notice-confirm{border:0;border-radius:6px;padding:10px 17px;background:#2854a2;color:white;font-size:12px;font-weight:700;cursor:pointer}
+#costNotice .notice-confirm:disabled{background:#8396b5;cursor:not-allowed}
+#costNotice :focus-visible{outline:3px solid #70a5ff;outline-offset:3px}
+body.cost-notice-open{overflow:hidden}
+@media print{#costNotice{display:none!important}body.cost-notice-open{overflow:visible}}
+</style>
+</head>
+<body>
+
+<!-- ==================== APLIKACIJA ==================== -->
+<div class="wrap">
+<header>
+  <h1>Automatski troškovnik priključka</h1>
+</header>
+
+<!-- 1. PODACI O PRIKLJUČKU -->
+<details class="card" id="card1" open>
+<summary>
+  <h2>1. Podaci o priključku</h2>
+  <span class="card-toggle-icon no-print" aria-hidden="true"></span>
+</summary>
+
+<div class="connection-layout">
+  <div class="connection-columns">    <div class="field">
+      <label>Vrsta zahtjeva</label>
+      <select id="requestType">
+        <option value="" selected>— bez odabira —</option>
+        <option>Novi priključak</option>
+        <option>Izmještanje brojila</option>
+        <option>Povećanje priključne snage</option>
+        <option>Povećanje snage elektrane</option>
+        <option>Gradilišni priključak</option>
+        <option>Privremeni priključak</option>
+        <option>Kupac s vlastitom proizvodnjom</option>
+        <option>Kupac s vlastitom proizvodnjom i baterijskim spremnikom energije</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Naziv predmeta / broj zahtjeva</label>
+      <input id="projectName" type="text" placeholder="npr. 40012345 ili naziv predmeta">
+    </div>
+    <div class="field"><label>Vrsta priključka</label>
+      <select id="connectionType">
+        <option value="" selected>— bez odabira —</option>
+        <option value="Nadzemni">Nadzemni</option>
+        <option value="Podzemni">Podzemni</option>
+        <option value="Nadzemni-Podzemni">Nadzemni → Podzemni</option>
+      </select>
+    </div>
+
+    <div class="field"><label>Faznost priključka</label>
+      <select id="phases"><option value="" selected>— bez odabira —</option><option value="1">1F</option><option value="3">3F</option></select>
+    </div>
+
+    <div class="field"><label>Vrsta ormara</label>
+      <select id="cabinet">
+        <option value="" selected>— bez odabira —</option>
+        <option value="KPMO">KPMO</option><option value="SKPMO">SKPMO</option>
+        <option value="KPO">KPO</option><option value="KRO">KRO</option><option value="SKRO">SKRO</option>
+      </select>
+    </div>
+
+    <div class="field"><label>Elektrana / status priključka</label>
+      <select id="plant">
+        <option value="" selected>— bez odabira —</option>
+        <option value="NE">NE</option>
+        <option value="DA">DA</option>
+        <option value="KSVP s baterijom bez izoliranog pogona">KSVP s baterijom bez izoliranog pogona</option>
+        <option value="KSVP s baterijom za izolirani pogon">KSVP s baterijom za izolirani pogon</option>
+        <option value="Postojeći NN priključak">Postojeći NN priključak</option>
+      </select>
+    </div>
+
+    <div class="field"><label>Međustup</label><select id="intermediate">
+<option value="" selected>— bez odabira —</option>
+<option value="SD">SD</option>
+<option value="SB 315/10">SB 315/10</option>
+<option value="SB 650/10">SB 650/10</option>
+<option value="Postojeći međustup">Postojeći međustup</option>
+</select></div>
+    <div class="field"><label>km – jedan smjer</label><input id="km" type="text" inputmode="decimal" lang="hr" class="decimal-input" value="0" oninput="normalizeDecimalInput(this)"></div>
+
+    <div class="field"><label>Duljina kabela nadzemni [m]</label><input id="cable1" type="text" inputmode="decimal" lang="hr" class="decimal-input" value="0" oninput="normalizeDecimalInput(this)"></div>
+    <div class="field"><label>Duljina kabela podzemni [m]</label><input id="cable2" type="text" inputmode="decimal" lang="hr" class="decimal-input" value="0" oninput="normalizeDecimalInput(this)"></div>
+  </div>
+</div>
+<div class="toolbar actions-right">
+  <button class="btn" onclick="calculate()">Izračunaj</button>
+  <button class="btn2" onclick="resetAll()">Reset</button>
+</div>
+</details>
+
+<!-- 2. OBRAČUNSKA MJERNA MJESTA -->
+<details class="card" id="card2" open>
+<summary>
+  <h2>2. Popis obračunskih mjernih mjesta</h2>
+  <span class="card-toggle-icon no-print" aria-hidden="true"></span>
+</summary>
+<div class="table-wrap">
+<table class="omm-table">
+<colgroup>
+  <col style="width:7%">
+  <col style="width:25%">
+  <col style="width:18%">
+  <col style="width:23%">
+  <col style="width:15%">
+  <col style="width:12%">
+</colgroup>
+<thead><tr><th>#</th><th>Naziv OMM</th><th>Snaga [kW]</th><th>Kategorija</th><th>Postojeće OMM</th><th class="no-print">Akcija</th></tr></thead>
+<tbody id="ommBody"></tbody>
+</table>
+</div>
+<datalist id="ommNameSuggestions"></datalist>
+<datalist id="ommPowerSuggestions">
+  <option value="4,60" label="4,60 kW"></option>
+  <option value="5,75" label="5,75 kW"></option>
+  <option value="7,36" label="7,36 kW"></option>
+  <option value="9,20" label="9,20 kW"></option>
+  <option value="11,04" label="11,04 kW"></option>
+  <option value="13,80" label="13,80 kW"></option>
+  <option value="17,25" label="17,25 kW"></option>
+  <option value="22,08" label="22,08 kW"></option>
+</datalist>
+<div class="toolbar"><button class="btn2" onclick="addOMM()">+ Dodaj OMM</button></div>
+<div class="smalltext omm-power-summary">
+  <span>Postojeća snaga: <strong id="existingPowerTotal">0,00 kW</strong></span>
+  <span class="new-power">Nova snaga: <strong id="newPowerTotal">0,00 kW</strong></span>
+  <span>Ukupna snaga: <strong id="powerTotal">0,00 kW</strong></span>
+  <span>Broj OMM-a: <strong id="ommCount">0</strong></span>
+</div>
+</details>
+
+<!-- 3. TROŠKOVNIK -->
+<details class="card" id="card3" open>
+<summary>
+  <h2>3. Troškovnik <span id="activeItemCount" class="item-count">· 0 stavki · 0 ručno</span></h2>
+  <span class="card-toggle-icon no-print" aria-hidden="true"></span>
+</summary>
+<div class="table-filters">
+  <div class="material-search-wrap">
+    <input id="materialSearch" class="material-search" type="text"
+           placeholder="Pretraži materijal: šifra, opis, KPMO, stezaljka..."
+           oninput="render(); scheduleSave()">
+    <button class="btn2 no-print" type="button" onclick="clearMaterialSearch()">Očisti pretragu</button>
+  </div>
+  <label class="switchline"><input id="showAll" type="checkbox" onchange="render()"> Prikaži sve stavke</label>
+  <input id="showManualOnly" type="checkbox" hidden aria-hidden="true">
+<label class="switchline"><input id="hidePrices" type="checkbox" onchange="applyPriceVisibility(); scheduleSave()"> Sakrij cijene</label>
+<button class="btn2 no-print" type="button" onclick="resetManualCorrections()">Vrati sve ručne korekcije</button>
+</div>
+<div id="logicWarnings" class="logic-warnings no-print" style="display:none"></div>
+<div class="table-wrap" style="margin-top:12px">
+<table class="cost-table">
+<thead><tr>
+<th>Šifra</th><th>Opis</th><th>Napomena</th><th>Auto</th><th>Korekcija</th><th>Komentar ručne izmjene</th><th>Konačno</th><th class="price-col">Jed. cijena</th><th class="price-col">Ukupno</th>
+</tr></thead>
+<tbody id="costBody"></tbody>
+</table>
+</div>
+<div class="toolbar actions-right no-print" style="margin-top:16px">
+  <button class="btn2" type="button" onclick="generateSAPPdf()">SAP PDF</button>
+  <button class="btn3" type="button" onclick="copyToSAP()">Kopiraj u SAP</button>
+</div>
+</details>
+
+<!-- 4. SAŽETAK -->
+<details class="card" id="card4" open>
+<summary>
+  <h2>4. Sažetak</h2>
+  <span class="card-toggle-icon no-print" aria-hidden="true"></span>
+</summary>
+<div class="summary summary-four">
+ <div class="sum price-summary">
+   <span>Trošak materijala bez PDV-a</span>
+   <strong id="net">0,00 €</strong>
+ </div>
+ <div class="sum price-summary">
+   <span>Trošak materijala s PDV-om</span>
+   <strong id="gross">0,00 €</strong>
+ </div>
+ <div class="sum price-summary">
+   <span id="connectionCostLabel">Trošak po kW</span>
+   <strong id="kwPrice">0,00 €</strong>
+ </div>
+ <div class="sum primary">
+   <span>Priključna snaga</span>
+   <strong id="powerSummary">0,00 kW</strong>
+ </div>
+</div>
+</details>
+
+<!-- 5. OPIS PRIKLJUČKA -->
+<details class="card" id="card5" open>
+<summary>
+  <h2>5. Opis priključka</h2>
+  <span class="card-toggle-icon no-print" aria-hidden="true"></span>
+</summary>
+
+<div class="grid">
+  <div class="field">
+    <label>Lokacija ormara</label>
+    <select id="cabinetLocation">
+      <option value="" selected>— bez odabira —</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Izmještanje brojila</label>
+    <select id="meterRelocation">
+      <option value="" selected>— bez odabira —</option>
+      <option value="NE">NE</option>
+      <option value="DA">DA</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Imovinsko-pravni odnosi</label>
+    <select id="propertyRights">
+      <option value="NE">NE</option>
+      <option value="DA">DA</option>
+    </select>
+  </div>
+</div>
+
+<div style="margin-top:14px">
+  <textarea id="connectionDescription" style="width:100%;min-height:190px;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.55;resize:vertical;white-space:pre-wrap"></textarea>
+</div>
+
+<div class="toolbar actions-right">
+  <button class="btn2" onclick="generateConnectionDescription()">Ponovno generiraj</button>
+  <button class="btn3" onclick="copyConnectionDescription()">Kopiraj opis</button>
+</div>
+</details>
+
+<!-- 6. POSEBNI UVJETI -->
+<details class="card" id="specialConditionsCard">
+<summary>
+  <h2>6. Posebni uvjeti</h2>
+  <span class="card-toggle-icon no-print" aria-hidden="true"></span>
+</summary>
+
+<div style="margin-top:14px">
+  <textarea id="specialConditions" style="width:100%;min-height:420px;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.35;resize:vertical;white-space:pre-wrap"></textarea>
+</div>
+
+<div class="toolbar actions-right">
+  <button class="btn3" onclick="copySpecialConditions()">Kopiraj posebne uvjete</button>
+</div>
+</details>
+
+<!-- 7. DODATNI UVJETI -->
+<details class="card" id="additionalConditionsCard">
+<summary>
+  <h2>7. Dodatni uvjeti</h2>
+  <span class="card-toggle-icon no-print" aria-hidden="true"></span>
+</summary>
+
+<div style="margin-top:14px">
+  <textarea id="additionalConditions" style="width:100%;min-height:190px;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.55;resize:vertical;white-space:pre-wrap" placeholder="Unesite dodatne uvjete..."></textarea>
+</div>
+
+<div class="toolbar actions-right">
+  <button class="btn3" onclick="copyAdditionalConditions()">Kopiraj dodatne uvjete</button>
+</div>
+</details>
+
+<!-- PODNOŽJE -->
+<footer class="app-footer">
+  <div class="footer-tools no-print">
+    <button class="btn2" type="button" onclick="exportFullBackup()">Izvezi backup</button>
+    <label class="btn2 import-backup-label">
+      Uvezi backup
+      <input id="backupFileInput" type="file" accept=".json,application/json" onchange="importFullBackup(this.files[0])" hidden>
+    </label>
+    <button class="btn2" type="button" onclick="restorePreResetBackup()">Vrati prije reseta</button>
+  </div>
+  <div class="footer-main">
+    <span class="footer-left">
+      Automatski troškovnik materijala · Radna verzija v161
+      <span class="footer-note">Podaci se spremaju lokalno u pregledniku</span>
+    </span>
+    <span class="footer-right-v100">
+      Autor: Emanuel Sabolović, mag.ing.el. · HEP ODS Elektra Bjelovar<br>
+      <a class="footer-feedback" href="mailto:emanuel.sabolovic@hep.hr?subject=Prijedlog%20za%20Automatski%20tro%C5%A1kovnik%20%E2%80%93%20v140">Pošalji prijedlog</a>
+    </span>
+  </div>
+</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.js"></script>
+<!-- ==================== LOGIKA APLIKACIJE ==================== -->
+<script>
+// ==================== POPIS MATERIJALA ====================
+const ITEMS = [
+  {"row": 17, "code": "0430030030", "desc": "Brojilo - Kućanstvo 1f - 1f RE+SN upravljano G3-PLC", "note": "1F", "price": 76.57, "formula": "=SUM(N4:N7)+G17"},
+  {"row": 18, "code": "0430040010", "desc": "Brojilo - Elektrana 1f -  1f re+je+sn upr 230v 60a gprs", "note": "1F", "price": 166.7, "formula": "=SUM(P4:P7)+G18"},
+  {"row": 19, "code": "0430040015", "desc": "Brojilo - Poduzetništvo (Elektrana) 3f -  3f re+je+sn upr 230v 60a gprs", "note": "3F", "price": 227.89, "formula": "=SUM(O8:P11)+G19"},
+  {"row": 20, "code": "0430040120", "desc": "Brojilo - Poduzetništvo 1f -  1f re+je+sn upravljano G3-PLC", "note": "1F", "price": 87.73, "formula": "=SUM(O4:O7)+G20"},
+  {"row": 21, "code": "0430030035", "desc": "Brojilo - Kućanstvo 3f -  3f RE+SN upravljano G3-PLC", "note": "3F", "price": 103.19, "formula": "=SUM(N8:N11)+G21"},
+  {"row": 22, "code": "0424010020", "desc": "Ormar, KPMO 0, 1f", "note": "1F", "price": 66.1, "formula": "=IF(AND(I22<>\"\",O22<>\"\",$C$6=1,U22=\"\"),1,0)+G22"},
+  {"row": 23, "code": "0424010040", "desc": "Ormar, KPMO 1, 1f", "note": "1F", "price": 88.57, "formula": "=G23"},
+  {"row": 24, "code": "0424010030", "desc": "Ormar, KPMO 0, 3f", "note": "3F", "price": 77.57, "formula": "=IF(AND(I24<>\"\",O24<>\"\",$C$6=3,U24=\"\"),1,0)+G24"},
+  {"row": 25, "code": "0424010055", "desc": "Ormar, KPMO 1, 3f", "note": "3F", "price": 91.14, "formula": "=G25"},
+  {"row": 26, "code": "0424010075", "desc": "Ormar, KPMO 2, 3f", "note": "3F", "price": 174.14, "formula": "=G26"},
+  {"row": 27, "code": "0424010095", "desc": "Ormar, KPMO 3, 3f", "note": "3F", "price": 181.81, "formula": "=G27"},
+  {"row": 28, "code": "0424020014", "desc": "Ormar, skpmo-1, 63 a, 3f, do 2×50 mm2", "note": "3F", "price": 257.52, "formula": "=IF(P28<>\"\",1,0)+G28"},
+  {"row": 29, "code": "0424020020", "desc": "Ormar, skpmo-2, 63 a, 3f, do 2×50 mm2", "note": "3F", "price": 377.19, "formula": "=G29"},
+  {"row": 30, "code": "0424020030", "desc": "Ormar, skpmo-3, 63 a, 3f, do 2×50 mm2", "note": "3F", "price": 498.18, "formula": "=G30"},
+  {"row": 31, "code": "0424020060", "desc": "Ormar, skpmo-2m, 63 a, 3f, do 2×150 mm2", "note": "3F", "price": 594.13, "formula": "=G31"},
+  {"row": 32, "code": "0435030120", "desc": "Osigurač 25", "note": "(1)/(3) - 4,6; 5,75; 11,04; 13,80 kW", "price": 1.46, "formula": "=SUM(L4:L5)+SUM(L8:L9)*3+G32"},
+  {"row": 33, "code": "0435030130", "desc": "Osigurač 35", "note": "(1)/(3) - 7,36; 17,25; 22,08", "price": 1.36, "formula": "=L6+SUM(L10:L11)*3"},
+  {"row": 34, "code": "0435030140", "desc": "Osigurač 50", "note": "(1)/(3) - 9,20;", "price": 1.5, "formula": "=IF(COUNTIFS(F3:F12,\">24\",F3:F12,\"<=33\")>0,SUMIFS(F3:F12,F3:F12,\">24\",F3:F12,\"<=33\"),0)+G34+L7"},
+  {"row": 35, "code": "0435030145", "desc": "Osigurač 63a", "note": "", "price": 1.48, "formula": "=IF(COUNTIF(F3:F12,\">33\")>0,3,0)+G35"},
+  {"row": 36, "code": "0505010010", "desc": "Kabel - SKS FR-N1XD4-AR 2x16 mm2 0,6/1 kV", "note": "Nadzemni 1F za snage do cca 20 kW (90A)", "price": 0.67, "formula": "=IF(AND(C6=1, OR(M36<>\"\", N36<>\"\", U36=\"\")), $C$11, 0) + G36"},
+  {"row": 37, "code": "0505010020", "desc": "Kabel - SKS FR-N1XD4-AR 4x16 mm2 0,6/1 kV", "note": "Nadzemni 3F za snage do cca 55 kW (81A)", "price": 1.3, "formula": "=IF(AND(C6=3, OR(M37<>\"\", N37<>\"\", U37=\"\")), $C$11, 0) + G37-D38"},
+  {"row": 38, "code": "0505010025", "desc": "Kabel - SKS FR-N1XD4-AR 4x25 mm2 0,6/1 kV", "note": "Nadzemni za snage do cca 70 kW (101A)", "price": 2.07, "formula": "=IF(OR(M38<>\"\",N38<>\"\"),IF(SUM(F3:F12)>50,C11,0),0)+G38"},
+  {"row": 39, "code": "0504020140", "desc": "Kabel - NA2XY-O (xp 00-a) 4x25+1,5 mm2 0,6/1 kV", "note": "Podzemni za snage do cca 77 kW (112A)", "price": 2.33, "formula": "=IF(AND(OR(L39<>\"\",N39<>\"\"),SUM(F3:F12)<=75,U39=\"\"),$C$12,0)+G39-D40"},
+  {"row": 40, "code": "0504020150", "desc": "Kabel - NA2XY-O (xp 00-a) 4x50+1,5 mm2 0,6/1 kV", "note": "Podzemni za snage do cca 109 kW (158A)", "price": 3.47, "formula": "=IF(L40<>\"\",IF(AND(SUM(F3:F12)>75,SUM(F3:F12)<=100),C12,0),0)+G40"},
+  {"row": 41, "code": "0504020170", "desc": "Kabel - NA2XY-O (xp 00-a) 4x150+1,5", "note": "Podzemni za snage do cca 207 kW (300A)", "price": 9.38, "formula": "=IF(L41<>\"\",IF(SUM(F3:F12)>100,C12,0),0)"},
+  {"row": 42, "code": "0809020605", "desc": "Polucilindar, generalni Elektra Bjelovar", "note": "", "price": 23.89, "formula": "=IF(U42=\"\",SUM(D22:D31,D100,D101),0)+G42"},
+  {"row": 43, "code": "0430090150", "desc": "Tipkalo za brojilo", "note": "", "price": 3.56, "formula": "=SUM(L4:L11)+G43"},
+  {"row": 44, "code": "0501100220", "desc": "PGP kabel za tipkalo", "note": "", "price": 0.55, "formula": "=D43+G44"},
+  {"row": 45, "code": "0414080110", "desc": "Vijak (nosač), s otvorenom kukom, m16x250 (duljine l = 250-260 mm), za prihvat zatezne stezaljke SKS-a, s pripadnom maticom i podloškom", "note": "", "price": 5.52, "formula": "=IF(C11>0,IF(M45<>\"\",1,0),0)+G45"},
+  {"row": 46, "code": "0413020008", "desc": "Stopica cijevna AL 16 vij 8", "note": "(2)/(4) - za spojiti se na sabirnicu (4x16)", "price": 0.52, "formula": "=IF(U46=\"\",IF(OR(D36<>0, D37<>0,),IF(OR(C6=1), 2,IF(OR(C6=3), 4, \"\")),0),0)+G46"},
+  {"row": 47, "code": "0414030085", "desc": "Stezaljka za spajanje na SKS bez probijanja izolacije, vijčana, s odvojivim izolacijskim plaštem, sa skidanjem izolacije na glavnom i otcjepnim vodičima, za spajanje glavni (35-70mm2) -  4 x otcjepni (svi otcjepi su u istom kućištu) vodič (4 x 16)mm2", "note": "(2)/(4) - za spajanje 4x16 na ELKALEX", "price": 7.11, "formula": "=IF(OR(D36<>0,D37<>0,),IF(OR(C6=1),2,IF(OR(C6=3),4,-D48)),0)+G47"},
+  {"row": 48, "code": "0415010025", "desc": "Stezaljka, 'unimax', 10-95 mm2", "note": "(2)/(4) - za gole vodiče", "price": 4.84, "formula": "=G48"},
+  {"row": 49, "code": "0413020015", "desc": "Stopica kabelska AL 25 Vij 8", "note": "1f - 2 komada; 3f - 4 komada", "price": 0.62, "formula": "=IF(OR(D39<>0,D38<>0),4,0)+G49-G48"},
+  {"row": 50, "code": "0414030075", "desc": "Stezaljka za probijanje izolacije SKS-A, vijčana, s odvojivim izolacijskim plaštem, sa probijanjem izolacije na glavnom vodiču i skidanjem izolacije na otcjepnim vodičima, za spajanje glavni (35-70mm2) -  4 x otcjepni (svi otcjepi u istom kućištu) vodič (4 x 16(25)mm2), sa priteznim vijcima koji nisu naponski izolirani", "note": "(2)/(4) - za spajanje 4x25 na ELKALEX", "price": 6.53, "formula": "=IF(AND(M50<>\"\", N50<>\"\", D38<>0, D39<>0), 4, 0) + G50"},
+  {"row": 51, "code": "0414060035", "desc": "Stezaljka, zatezna, za zatezno ovješenje SKS-a 4(2)x16 mm2 na kućnom priključku ('DIN sustav'), minimalne prekidne sile 3 kN, tijelo od nehrđajućeg čelika, uložak guma (neopren) otporan na UV zrake", "note": "(2) - za stup i gredu", "price": 4.98, "formula": "=IF(U51=\"\", IF(OR($D$36<>0, $D$37<>0, $D$38<>0), IF(M51<>\"\", 2, 0), 0) + G51, 0)"},
+  {"row": 52, "code": "0414140010", "desc": "Komplet za izvođenje kućnog priključka na krovu s pokrovom od crijepa, koji sadržava: dvije zatezne stezaljke za SKS kućnog priključka, krovni vijak M16x350, zaštitni krovni lim (ploču) za pokrov od crijepa, te vijak s kukom M12x250 za zavješenje na", "note": "(1) - bez zatezne stezaljke i kuke", "price": 31.07, "formula": "=IF(OR($D$36<>0, $D$37<>0, $D$38<>0), IF(M52<>\"\", 1, 0), 0) + G52"},
+  {"row": 53, "code": "0414090020", "desc": "Remenčić, plastificirani, aluminijski, duljine l > ili =170, za vezanje SKS-a radi sprječavanja rasplitanja snopa", "note": "=\"(5)\"", "price": 0.96, "formula": "=IF(U53=\"\", IF(OR($D$36<>0, $D$37<>0, $D$38<>0), IF(M53<>\"\", 5, 0), 0) + G53, 0)"},
+  {"row": 54, "code": "0453020075", "desc": "Tičino cijev", "note": "Za provlačenje kabela po fasadi", "price": 0.43, "formula": "=IF(U54=\"\",IF($D$59>0,5,0),0)+G54"},
+  {"row": 55, "code": "0453030240", "desc": "Cijev metalna savitljiva; plastific.; SAPA fi=28mm", "note": "(10) - ako se ulazi na tavan (prilazi kroz krov)", "price": 1.78, "formula": "=IF(C11>0,IF(M55<>\"\",10,0),0)+G55"},
+  {"row": 56, "code": "3504010305", "desc": "Štemanje za glavni vod", "note": "(3-5)", "price": 67.0, "formula": "=IF(U56=\"\",IF($D$59>0,3,0),0)+G56"},
+  {"row": 57, "code": "0806410001", "desc": "Gips", "note": "(2) = 4kg", "price": 0.41, "formula": "=D59*2+G57"},
+  {"row": 58, "code": "0103350005", "desc": "Vatrooporna pur pjena", "note": "(1)", "price": 9.5, "formula": "=D59+G58"},
+  {"row": 59, "code": "3504010465", "desc": "Ugradnja  KPMO", "note": "(1)", "price": 123.35, "formula": "=IF(U60=\"\",SUM(D22:D27,D100),0)+G59"},
+  {"row": 60, "code": "3502010070", "desc": "Ručni iskop bez obzira na kategoriju zemljišta s odlaganjem 0,5 m od ruba iskopa. Obračun se vrši kubaturom u sraslom stanju s vertikalnim stranicama iskopa. (skošenja iskopa nastala iskopom ili zadana projektom ugraditi u jedničnu cijenu).  -razne veličine", "note": "", "price": 8.02, "formula": "=IF(AND(C12>0, L60=\"\", N60=\"\"), 0, IF(C12>0, MAX(IF(AND(L60<>\"\",C12<>\"0\"), C12, IF(AND(N60<>\"\",C12<>\"0\"), IF(C12<=15, 2, C12-13), 0)) * 0.1, 2), 0))"},
+  {"row": 61, "code": "3502010120", "desc": "Strojni iskop bez obzira na kategoriju zemljišta s odlaganjem 0,5 m od ruba iskopa. Obračun se vrši kubaturom u sraslom stanju s vertikalnim stranicama iskopa. (skošenja iskopa nastala iskopom ili zadana projektom ugraditi u jedničnu cijenu). - jedinstvena cijena", "note": "", "price": 16.45, "formula": "=IF(C12>0,IF(L61<>\"\", C12,IF(N61<>\"\",IF(C12<=15, 2, C12-13),0)),0)+G61"},
+  {"row": 62, "code": "3502030030", "desc": "Zatrpavanje kabelskog kanala, sa sitnim materijalom iz iskopa sa nabijanjem i ispitivanjem modula stišljivosti. Zatrpavanje se vrši u slojevima zbog postave pocinčane trake i trake upozorenja. Uključno fino planiranje zatrpanog rova  prema postojećem terenu.", "note": "", "price": 7.92, "formula": "-"},
+  {"row": 63, "code": "3504010470", "desc": "Ugradnja  SKPMO", "note": "", "price": 133.34, "formula": "=IF(U51=\"\",SUM(D28:D31),0)+G63"},
+  {"row": 64, "code": "ZWM=AAA100000", "desc": "Rad radnika", "note": "", "price": 29.0, "formula": "=IF(OR(C12=0,U64<>\"\"), 4,IF(M64<>\"\", 8,IF(OR(L64<>\"\",N64<>\"\"), 12, \"\")))+G64"},
+  {"row": 65, "code": "ZWM=AAA220000", "desc": "Rad inženjera", "note": "", "price": 36.0, "formula": "=1+G65"},
+  {"row": 66, "code": "ZWM=AAA010020", "desc": "Auto km", "note": "", "price": 0.15, "formula": "=IF(AND(C11=0,C12=0),ROUNDUP(C10*2,0),IF(U66<>\"\",ROUNDUP(C10*2,0),0)+G66)"},
+  {"row": 67, "code": "ZWM=AAA100010", "desc": "Platforma h", "note": "", "price": 42.98, "formula": "=IF(D68>0,1,0)+G67"},
+  {"row": 68, "code": "ZWM=AAA100020", "desc": "Platforma km", "note": "", "price": 0.4, "formula": "=IF(C7=\"\",0,IF(U68=\"\",IF(OR(M68<>\"\",N68<>\"\"),ROUNDUP(C10*2,0),0),0)+G68)"},
+  {"row": 69, "code": "ZWM=AAA050040", "desc": "Teretna vozila", "note": "", "price": 0.34, "formula": "=IF(AND(C11=0,C12=0),0,IF(U69=\"\",ROUNDUP(C10*2,0),0)+G69)"},
+  {"row": 70, "code": "0420010010", "desc": "Drveni stup", "note": "(1) - Komplet za međustup", "price": 66.56, "formula": "=IF(U70=\"\",IF($C$9=\"DA\",1,0),0)+G70"},
+  {"row": 71, "code": "0420110016", "desc": "Nogar i obujmica", "note": "(1)", "price": 111.26, "formula": "=D70+G71"},
+  {"row": 72, "code": "3503010590", "desc": "Podizanje jednostrukog drvenog stupa i/ili  betonskih nogara u iskopanu jamu . Materijal se preuzima na skladištu Naručitelja. u cijenu je uključeno nošenje stupa ili stupa i nogara od mjesta istovara do stupnog mjesta na udaljenosti do 20m. u stavku nisu uključene stavke iskopa i zatrpavanja.", "note": "(1)", "price": 46.0, "formula": "=D70+G72"},
+  {"row": 73, "code": "3502010200", "desc": "Iskop i zatrpavanje jame za jednostruki drveni stup ili betonski nogar bez obzira na kategoriju zemljišta, s dobavom i izvedbom ukliještenja kamenima materijalom i odvozom suvišnog materijala, sve prema tipizaciji HEP-a", "note": "(1)", "price": 30.0, "formula": "=D70+G73"},
+  {"row": 74, "code": "0414100080", "desc": "Obujmica, za betonski ili drveni stup promjera 140-170 mm, dvodijelna, sa 4 kuke fi 16 mm (za prihvat zateznih stezaljki kućnih priključaka) i dodatna 2 vijka m16 (za pričvršćenje nosača (konzola) zateznih i nosivih stezaljki SKS-a), materijal čelik", "note": "Ako nema na stupu ili nema mjesta", "price": 17.82, "formula": "=G74"},
+  {"row": 75, "code": "0409010010", "desc": "Spojnica 1 pl-a 4x10-25", "note": "(1)", "price": 8.1, "formula": "=IF(AND(C12>0,C11>0),IF(N75<>\"\",1,0),0)"},
+  {"row": 76, "code": "0412150100", "desc": "Čahura vijčana 10-35mm2", "note": "(4)", "price": 5.37, "formula": "=IF(AND(C12>0,C11>0),IF(N76<>\"\",4,0),0)"},
+  {"row": 77, "code": "0410010010", "desc": "Završetak kabelski 1 kv, plastični kabel bez armature 4X10-35 mm", "note": "(1)", "price": 8.34, "formula": "=IF(C12<>0, IF(OR(N77<>\"\", L77<>\"\"), 1, 0), 0) + G77"},
+  {"row": 78, "code": "2027052020", "desc": "Cijev dvoslojna korugirana promjera fi 75/62, (pe - polietilen) vanjska stjenka rebrasta, a unutarnja glatka, za polaganje kabela u zemlju", "note": "(2) Cijev za uvlačenje u  SKPMO", "price": 0.81, "formula": "=IF(D63<>0, IF(OR(N78<>\"\", L78<>\"\"), 2, 0), 0) + G78"},
+  {"row": 79, "code": "0414100100", "desc": "Band-it traka za izradu obujmica za pričvršćenje opreme oko stupa, materijal nehrđajući čelik (inox) minimalne kvalitete aisi 304, širine 9,5 mm (3/8''), debljine 0,6 mm, predviđena za stezanje pomoću odgovarajućih kopči i alata, pakirana u kolutu du", "note": "(0,4)", "price": 23.38, "formula": "=IF(C12>0,IF(U79=\"\",IF(N79<>\"\",0.4,0),0),0)+G79"},
+  {"row": 80, "code": "0414100132", "desc": "Kopča za stezanje band-it trake inox aisi 304, širine 9,5 mm (3/8''), bez vijka, za pritezanje alatom", "note": "(10)", "price": 0.2, "formula": "=IF(C12>0,IF(U79=\"\",IF(N80<>\"\",10,0),0),0)+G80"},
+  {"row": 81, "code": "2027730202", "desc": "Cijev fi 50 pn10 pehd", "note": "(7) Zaštita za stup (da se ne može rukom dirat kabel)", "price": 0.71, "formula": "=IF(C12>0,IF(U79=\"\",IF(N81<>\"\",7,0),0),0)+G81"},
+  {"row": 82, "code": "0411020090", "desc": "Cijev srednjostjena", "note": "(2)", "price": 3.57, "formula": "=IF(C12>0,IF(U79=\"\",IF(N82<>\"\",2,0),0),0)+G82"},
+  {"row": 83, "code": "3601010020", "desc": "Polaganje 1 kV kabela presjeka do 4x50 mm2 po kanalu,", "note": ">15m", "price": 1.29, "formula": "=IF($C$12>0,IF(L83<>\"\",$D$39,IF(AND(N83<>\"\",C12>15),$D$39-13,0))+G83,0)"},
+  {"row": 84, "code": "3601020090", "desc": "Dobava  i polaganje PVC štitnika.", "note": "\"\"", "price": 0.6, "formula": "=IF(C12>0,IF(L84<>\"\",$D$39,IF(AND(N84<>\"\",C12>15),$D$39-13,0))+G84,0)*1.1"},
+  {"row": 85, "code": "0729900020", "desc": "Štitnik PVC za zaštitu kabela (gal štitnik), crvene boje, minimalne duljine 1000 mm, minimalne širine 100 mm, minimalne debljine 2 mm, te sa kutom savijanja 130° do 150°", "note": "iznad kabela", "price": 0.3, "formula": "=D84"},
+  {"row": 86, "code": "3502020065", "desc": "Vodoravno strojno bušenje  ispod prometnica i kanala  od fi 100 do fi 300 mm, uz povratno uvlačenje pehd ili PVC cijevi. Obračun po metru dužnom izbušenog rova.", "note": "", "price": 34.71, "formula": "=G86"},
+  {"row": 87, "code": "2027010639", "desc": "Cijev PVC 110 L=2000mm za kanalizaciju", "note": "za križanje sa instalacijama ili prijelaz ispod ceste", "price": 12.6, "formula": "=ROUND(D86/2,0)+G87"},
+  {"row": 88, "code": "3501010040", "desc": "Razbijanje asfalta ili betona, uključno utovar i odvoz na mjesnu deponiju.", "note": "", "price": 4.05, "formula": "=G88"},
+  {"row": 89, "code": "0413040050", "desc": "Stopica cijevna al-cu 50 vij 10", "note": "", "price": 0.79, "formula": "=G89"},
+  {"row": 90, "code": "0413040105", "desc": "Stopica cijevna al-cu 150 vij 10", "note": "za 150mm2 ", "price": 4.73, "formula": "=G90"},
+  {"row": 91, "code": "0409010015", "desc": "Spojn 1 pl-a 4x25-70", "note": "(1)", "price": 11.89, "formula": "=G91"},
+  {"row": 92, "code": "0412150105", "desc": "Čahura vijčana 25-70mm2", "note": "=\"(4)\"", "price": 6.9, "formula": "=G92"},
+  {"row": 93, "code": "0409010030", "desc": "Spojn 1 pl-a 4x70-150", "note": "", "price": 17.87, "formula": "=G93"},
+  {"row": 94, "code": "0412150110", "desc": "Čahura vijčana 70-120mm2", "note": "", "price": 11.58, "formula": "=G94"},
+  {"row": 95, "code": "3504010490", "desc": "Demontaža samostojećeg razvodnog ormara, uključujući sanaciju te prijevoz denontiranog ormarića na skladište Naručitelja", "note": "(1)", "price": 56.96, "formula": "=G95"},
+  {"row": 96, "code": "0732020010", "desc": "Perforirana traka", "note": "(2)", "price": 3.75, "formula": "=G96"},
+  {"row": 97, "code": "0718110005", "desc": "Matica m8", "note": "(2)", "price": 0.04, "formula": "=G97"},
+  {"row": 98, "code": "0701510062", "desc": "Vijak m8", "note": "(2)", "price": 0.09, "formula": "=G98"},
+  {"row": 99, "code": "0414030080", "desc": "Stezaljka za probijanje izolacije SKS-A, vijčana, s odvojivim izolacijskim plaštem, sa probijanjem izolacije na glavnom vodiču i skidanjem izolacije na otcjepnim vodičima, za spajanje glavni (35-70mm2) -  4 x otcjepni (svi otcjepi u istom kućištu) vodič (4 x 16(25)mm2), sa priteznim vijcima koji nisu naponski izolirani", "note": "", "price": 10.16, "formula": "=G99"},
+  {"row": 100, "code": "0422010080", "desc": "Ormarić, kabelski, razdjelni, kro-1, 3×nh00 160 a", "note": "", "price": 112.81, "formula": "=IF(OR(C7=\"KRO\",C7=\"\"\"KPO\"),1,0)+G100"},
+  {"row": 101, "code": "0420050025", "desc": "Stup betonski sb An 315 daN 10 m", "note": "SB 315/10", "price": 330.72, "formula": ""},
+  {"row": 102, "code": "0414050010", "desc": "Nosač (konzola) za zateznu i nosivu stezaljku za ovješenje SKS-A (35-70 mm2) s nosivim neutralnim vodičem ('francuski sustav'), za montažu na betonski stup, izrađen od al-legure, s rupom za pritezni vijak m16; metal-product, s-10a ili dalekovod, 19.03.05.30 ili jednakovrijedan", "note": "Betonski međustup", "price": 4.3, "formula": ""},
+  {"row": 103, "code": "0414060045", "desc": "Stezaljka, nosiva, za ovješenje nosivog neutralnog vodiča 70(71,5) mm2 SKS-a ('francuski sustav') i pričvršćenje preko karike na odgovarajući nosač (konzolu); metal-product, s-15 ili dalekovod, 13.06.15 ili jednakovrijedna", "note": "SB 315/10", "price": 5.53, "formula": ""},
+  {"row": 104, "code": "0414080015", "desc": "Vijak, pritezni, m16x200 (duljine l = 200 mm), za pričvršćenje nosača zatezne i nosive stezaljke SKS-a, s pripadnom maticom i podloškom; metal-product, V-M16x200 ili jednakovrijedan", "note": "SB 315/10", "price": 4.02, "formula": ""},
+  {"row": 105, "code": "3503010900", "desc": "Izrada betonskog temelja 60x60x200 cm odnosno kružnog temelja promjera 60 cm i dubine 200 cm za bs 315/9 i 315/10, s iskopom, odvozom materijala, dobavom betona c25/30, betoniranjem i svim potrebnim radom i materijalom.", "note": "SB 315/10", "price": 132.45, "formula": ""},
+  {"row": 106, "code": "0420050045", "desc": "Stup betonski sb An 650 daN 10 m", "note": "SB 650/10", "price": 442.82, "formula": ""},
+  {"row": 107, "code": "0414060010", "desc": "Stezaljka, zatezna, za zatezno ovješenje SKS-a preko nosivog neutralnog vodiča 70(71,5)mm2 ('francuski sustav'), sa vilicom (stremenom) od čeličnog užeta (čelična sajla), minimalne prekidne sile 15 kN (1,5 tone); metal-product, s-22 ili dalekovod, 17.06.16 ili jednakovrijedna", "note": "SB 650/10", "price": 11.77, "formula": ""},
+  {"row": 108, "code": "0414080025", "desc": "Vijak, pritezni, m16x240 (duljine l = 240 mm), za pričvršćenje nosača zatezne i nosive stezaljke SKS-a, s pripadnom maticom i podloškom; metal-product, V-M16x240 ili dalekovod, 19.03.06.50 ili jednakovrijedan", "note": "SB 650/10", "price": 4.64, "formula": ""},
+  {"row": 109, "code": "3503010920", "desc": "Izrada betonskog temelja 80x80x200 cm odnosno kružnog temelja promjera 70 cm i dubine 200 cm za bs 650/9 i 650/10, s iskopom, odvozom materijala, dobavom betona c25/30, betoniranjem i svim potrebnim radom i materijalom.", "note": "SB 650/10", "price": 138.5, "formula": ""},
+  {"row": 110, "code": "0426030401", "desc": "Ormarić, SKRO-1", "note": "", "price": 795.01, "formula": ""},
+  {"row": 111, "code": "0412150115", "desc": "ČAHURA VIJČANA 150-240mm2", "note": "", "price": 10.9, "formula": ""},
+  {"row": 112, "code": "0412150125", "desc": "ČAHURA VIJČANA 16-50mm2", "note": "", "price": 8.2, "formula": ""},
+  {"row": 113, "code": "0409010020", "desc": "SPOJN 1 PL-A 4x35-50", "note": "", "price": 11.89, "formula": ""},
+  {"row": 114, "code": "0413020045", "desc": "STOPICA CIJEVNA AL 50 VIJ 8", "note": "", "price": 5.62, "formula": ""},
+  {"row": 115, "code": "0505020035", "desc": "Kabel energetski SKS FR-N1XD9-AR 3x70+70+2x16 mm2 0,6/1 kV", "note": "", "price": 5.78, "formula": ""},
+  {"row": 116, "code": "0424020229", "desc": "SPMO s ugrađenim SMT", "note": "OMM Kućanstva / Poduzetništva > 50 kW", "price": 1423.22, "formula": ""},
+  {"row": 117, "code": "0430060015", "desc": "Kombi univerzalno intervalno 3f za poduzetništvo i kućanstvo veće od 50 kW", "note": "OMM > 50 kW", "price": 714.05, "formula": ""},
+  {"row": 118, "code": "0435030275", "desc": "OSIGURAČ NH (NV) 1 63 A, gG", "note": "3 kom./OMM · snaga > 33 do 43 kW", "price": 2.24, "formula": ""},
+  {"row": 119, "code": "0435030280", "desc": "OSIGURAČ NH (NV) 1 80 A, gG", "note": "3 kom./OMM · snaga > 43 do 55 kW", "price": 2.37, "formula": ""},
+  {"row": 120, "code": "0435030285", "desc": "OSIGURAČ NH (NV) 1 100 A, gG", "note": "3 kom./OMM · snaga > 55 do 69 kW", "price": 2.45, "formula": ""}
+];
+
+const KNOWN_POWERS = Object.freeze([4.6, 5.75, 7.36, 9.2, 11.04, 13.8, 17.25, 22.08]);
+const MAX_OMM = 50;
+const VAT_RATE = 0.25;
+
+const corrections = Object.create(null);
+const manualComments = Object.create(null);
+let results = Object.create(null);
+
+// ==================== POMOĆNE FUNKCIJE ====================
+const $ = id => document.getElementById(id);
+const num = value => {
+  if (typeof value === "string") {
+    value = value.trim().replace(/\s/g, "").replace(",", ".");
+  }
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+const nearlyEqual = (a, b) => Math.abs(a - b) < 0.0001;
+const roundUp = value => Math.ceil(num(value));
+const correction = row => num(corrections[row]);
+const resultAuto = row => results[row]?.auto ?? 0;
+const resultFinal = row => results[row]?.final ?? 0;
+
+const formatEuro = value =>
+  num(value).toLocaleString("hr-HR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }) + " €";
+
+const formatDecimal = (value, digits = 2) =>
+  num(value).toLocaleString("hr-HR", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits
+  });
+
+const isExcavationItem = item =>
+  !!item && ["3502010070", "3502010120"].includes(item.code);
+
+const excavationVolume = metres => num(metres) * 0.4 * 0.8;
+
+const formatQty = value => {
+  const x = num(value);
+  return x.toLocaleString("hr-HR", {
+    minimumFractionDigits: Number.isInteger(x) ? 0 : 2,
+    maximumFractionDigits: 3
+  });
+};
+
+const escapeHtml = value =>
+  String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
+
+function normalizeDecimalInput(input) {
+  let value = String(input.value ?? "");
+
+  // Ako se upiše točka, odmah je prikaži kao zarez.
+  value = value.replace(/\./g, ",");
+
+  // Dopusti samo znamenke, jedan zarez i eventualni minus na početku.
+  const negative = value.startsWith("-");
+  value = value.replace(/-/g, "").replace(/[^0-9,]/g, "");
+
+  const firstComma = value.indexOf(",");
+  if (firstComma !== -1) {
+    value =
+      value.slice(0, firstComma + 1) +
+      value.slice(firstComma + 1).replace(/,/g, "");
+  }
+
+  input.value = (negative ? "-" : "") + value;
+}
+
+function validateOMMPower(input) {
+  const warning = input.parentElement.querySelector(".omm-warning");
+  const value = num(input.value);
+
+  // Polje dopušta tipsku ili vlastitu pozitivnu snagu.
+  // Prazno polje nije pogreška; upozorenje se prikazuje samo za neispravan uneseni broj.
+  if (!String(input.value).trim()) {
+    input.classList.remove("invalid");
+    warning?.classList.remove("show");
+    return true;
+  }
+
+  const isValid = value > 0;
+
+  input.classList.toggle("invalid", !isValid);
+  warning?.classList.toggle("show", !isValid);
+
+  return isValid;
+}
+
+const STORAGE_KEY = "automatskiTroskovnikLastStateV1";
+let restoringState = false;
+let saveTimer = null;
+
+function collectAppState() {
+  const omms = [...document.querySelectorAll("#ommBody tr")].map(row => ({
+    name: row.querySelector(".ommName")?.value ?? "",
+    power: row.querySelector(".ommPower").value,
+    category: row.querySelector(".ommCategory").value,
+    existing: !!row.querySelector(".ommExisting")?.checked
+  }));
+
+  return {
+    projectName: $("projectName")?.value ?? "",
+    connectionPreset: $("connectionPreset")?.value ?? "",
+    requestType: $("requestType")?.value ?? "",
+    connectionType: $("connectionType").value,
+    phases: $("phases").value,
+    cabinet: $("cabinet").value,
+    plant: $("plant").value,
+    intermediate: $("intermediate").value,
+    km: $("km").value,
+    cable1: $("cable1").value,
+    cable2: $("cable2").value,
+    cabinetLocation: $("cabinetLocation")?.value ?? "",
+    meterRelocation: $("meterRelocation")?.value ?? "",
+    propertyRights: $("propertyRights")?.value ?? "NE",
+    connectionDescription: $("connectionDescription")?.value ?? "",
+    specialConditions: $("specialConditions")?.value ?? "",
+    additionalConditions: $("additionalConditions")?.value ?? "",
+    materialSearch: $("materialSearch")?.value ?? "",
+    showAll: $("showAll")?.checked ?? false,
+    showManualOnly: $("showManualOnly")?.checked ?? false,
+    hidePrices: $("hidePrices")?.checked ?? false,
+    corrections: { ...corrections },
+    manualComments: { ...manualComments },
+    omms
+  };
+}
+
+function saveAppState() {
+  if (restoringState) return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(collectAppState()));
+  } catch (e) {
+    console.warn("Spremanje zadnjeg unosa nije uspjelo.", e);
+  }
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveAppState, 120);
+}
+
+
+// ==================== V100: UNDO / POVIJEST IZMJENA ====================
+const UNDO_LIMIT = 40;
+const undoStack = [];
+let historySuspended = false;
+let editStartSnapshot = null;
+
+function cloneState(state) {
+  return JSON.parse(JSON.stringify(state));
+}
+
+function stateSignature(state) {
+  return JSON.stringify(state);
+}
+
+function updateUndoButton() {
+  const button = $("undoButton");
+  if (!button) return;
+  button.disabled = undoStack.length === 0;
+  button.title = undoStack.length
+    ? `Poništi zadnju promjenu (${undoStack.length} u povijesti)`
+    : "Nema promjena za poništavanje";
+}
+
+function pushUndoState(state = null) {
+  if (restoringState || historySuspended) return;
+  const snapshot = cloneState(state || collectAppState());
+  const signature = stateSignature(snapshot);
+  const last = undoStack.length ? stateSignature(undoStack[undoStack.length - 1]) : "";
+  if (signature === last) return;
+  undoStack.push(snapshot);
+  if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+  updateUndoButton();
+}
+
+function applyAppState(saved, options = {}) {
+  if (!saved || typeof saved !== "object") return false;
+
+  const previousRestoring = restoringState;
+  const previousHistorySuspended = historySuspended;
+  restoringState = true;
+  historySuspended = true;
+
+  try {
+    $("projectName").value = saved.projectName ?? "";
+    if ($("connectionPreset")) $("connectionPreset").value = saved.connectionPreset ?? "";
+    if ($("requestType")) $("requestType").value = saved.requestType ?? "";
+    $("connectionType").value = saved.connectionType ?? "";
+    $("phases").value = saved.phases ?? "";
+    $("cabinet").value = saved.cabinet ?? "";
+    $("plant").value = saved.plant ?? "";
+    $("intermediate").value = saved.intermediate ?? "";
+    $("km").value = saved.km ?? "0";
+    $("cable1").value = saved.cable1 ?? "0";
+    $("cable2").value = saved.cable2 ?? "0";
+
+    updateCableFields();
+    updateCabinetOptionsByConnectionType?.();
+    updateCabinetLocationOptions(saved.cabinetLocation ?? "");
+
+    if ($("meterRelocation")) $("meterRelocation").value = saved.meterRelocation ?? "";
+    if ($("propertyRights")) $("propertyRights").value = saved.propertyRights ?? "NE";
+    if ($("connectionDescription")) $("connectionDescription").value = saved.connectionDescription ?? "";
+    if ($("specialConditions")) {
+      const restoredSpecialConditions = saved.specialConditions ?? SPECIAL_CONDITIONS_TEXT;
+      $("specialConditions").value = restoredSpecialConditions
+        .replace(/\r/g, "")
+        .split("\n")
+        .filter(line => line.trim() !== "")
+        .join("\n");
+    }
+    if ($("additionalConditions")) $("additionalConditions").value = saved.additionalConditions ?? "";
+    if ($("materialSearch")) $("materialSearch").value = saved.materialSearch ?? "";
+    if ($("showAll")) $("showAll").checked = !!saved.showAll;
+    if ($("showManualOnly")) $("showManualOnly").checked = !!saved.showManualOnly;
+    if ($("hidePrices")) $("hidePrices").checked = !!saved.hidePrices;
+
+    for (const key of Object.keys(corrections)) delete corrections[key];
+    Object.assign(corrections, saved.corrections || {});
+    for (const key of Object.keys(manualComments)) delete manualComments[key];
+    Object.assign(manualComments, saved.manualComments || {});
+
+    $("ommBody").innerHTML = "";
+    const omms = Array.isArray(saved.omms) && saved.omms.length
+      ? saved.omms
+      : [{ power: "", category: "Kućanstvo", existing: false }];
+
+    for (const omm of omms) {
+      addOMM(omm.power ?? "", omm.category ?? "Kućanstvo", !!omm.existing, omm.name ?? "");
+    }
+
+    applyPriceVisibility();
+    calculate();
+
+    if (options.save !== false) saveAppState();
+    return true;
+  } finally {
+    restoringState = previousRestoring;
+    historySuspended = previousHistorySuspended;
+  }
+}
+
+function undoLastChange() {
+  if (!undoStack.length) {
+    showCopyMessage("Nema promjena za poništavanje.");
+    return;
+  }
+  const previous = undoStack.pop();
+  applyAppState(previous);
+  updateUndoButton();
+  showCopyMessage("Zadnja promjena je poništena.");
+}
+
+// Za uređivanje polja spremamo stanje prije početka izmjene.
+// Promjena se u povijest upisuje tek kad korisnik stvarno promijeni vrijednost.
+const HISTORY_FIELD_SELECTOR = [
+  "#projectName","#requestType","#connectionType","#phases","#cabinet","#plant",
+  "#intermediate","#km","#cable1","#cable2","#cabinetLocation","#meterRelocation",
+  "#propertyRights","#connectionDescription",
+  "#ommBody .ommName","#ommBody .ommPower","#ommBody .ommCategory","#ommBody .ommExisting",
+  "#costBody input[data-row]"
+].join(",");
+
+document.addEventListener("focusin", function(event) {
+  if (restoringState || historySuspended) return;
+  if (event.target?.matches?.(HISTORY_FIELD_SELECTOR)) {
+    editStartSnapshot = cloneState(collectAppState());
+  }
+});
+
+document.addEventListener("change", function(event) {
+  if (restoringState || historySuspended) return;
+  if (!event.target?.matches?.(HISTORY_FIELD_SELECTOR)) return;
+  if (!editStartSnapshot) return;
+
+  const before = editStartSnapshot;
+  editStartSnapshot = null;
+  const after = collectAppState();
+  if (stateSignature(before) !== stateSignature(after)) pushUndoState(before);
+});
+
+// ==================== V100: SPREMLJENI PREDMETI ====================
+const SAVED_PROJECTS_KEY = "automatskiTroskovnikSavedProjectsV1";
+
+function getSavedProjects() {
+  try {
+    const data = JSON.parse(localStorage.getItem(SAVED_PROJECTS_KEY) || "{}");
+    return data && typeof data === "object" ? data : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function storeSavedProjects(projects) {
+  localStorage.setItem(SAVED_PROJECTS_KEY, JSON.stringify(projects));
+}
+
+function normalizeProjectKey(value) {
+  let key = String(value || "").trim().replace(/\s+/g, " ");
+  if (!key) return "";
+  if (/^\d+$/.test(key)) key = "YC" + key;
+  return key;
+}
+
+function refreshSavedProjectSelect(selectedKey = "") {
+  const select = $("savedProjectSelect");
+  if (!select) return;
+
+  const projects = getSavedProjects();
+  const entries = Object.entries(projects)
+    .sort((a, b) => String(b[1]?.savedAt || "").localeCompare(String(a[1]?.savedAt || "")));
+
+  select.innerHTML =
+    '<option value="">— spremljeni predmeti —</option>' +
+    entries.map(([key, record]) => {
+      const label = record?.name || key;
+      return `<option value="${escapeHtml(key)}">${escapeHtml(label)}</option>`;
+    }).join("");
+
+  if (selectedKey && projects[selectedKey]) select.value = selectedKey;
+}
+
+function saveCurrentProject() {
+  const rawName = $("projectName")?.value || "";
+  const key = normalizeProjectKey(rawName);
+
+  if (!key) {
+    alert("Prvo upiši naziv predmeta / broj zahtjeva.");
+    $("projectName")?.focus();
+    return;
+  }
+
+  if (!$("projectName").value.trim()) $("projectName").value = key;
+  if (/^\d+$/.test(rawName.trim())) $("projectName").value = key;
+
+  const projects = getSavedProjects();
+  if (projects[key] && !confirm(`Predmet ${key} već postoji. Želiš li ga prepisati trenutnim stanjem?`)) {
+    return;
+  }
+
+  projects[key] = {
+    name: key,
+    savedAt: new Date().toISOString(),
+    state: cloneState(collectAppState())
+  };
+
+  try {
+    storeSavedProjects(projects);
+    refreshSavedProjectSelect(key);
+    scheduleSave();
+    showCopyMessage(`Predmet ${key} je spremljen.`);
+  } catch (e) {
+    alert("Predmet nije moguće spremiti u preglednik.");
+  }
+}
+
+function openSelectedProject() {
+  const select = $("savedProjectSelect");
+  const key = select?.value || "";
+  if (!key) {
+    alert("Odaberi spremljeni predmet.");
+    return;
+  }
+
+  const record = getSavedProjects()[key];
+  if (!record?.state) {
+    alert("Spremljeni predmet nije pronađen.");
+    refreshSavedProjectSelect();
+    return;
+  }
+
+  pushUndoState();
+  applyAppState(record.state);
+  showCopyMessage(`Otvoren je predmet ${key}.`);
+}
+
+function deleteSelectedProject() {
+  const select = $("savedProjectSelect");
+  const key = select?.value || "";
+  if (!key) {
+    alert("Odaberi spremljeni predmet koji želiš obrisati.");
+    return;
+  }
+
+  if (!confirm(`Obrisati spremljeni predmet ${key}?`)) return;
+
+  const projects = getSavedProjects();
+  delete projects[key];
+  storeSavedProjects(projects);
+  refreshSavedProjectSelect();
+  showCopyMessage(`Predmet ${key} je obrisan.`);
+}
+
+
+function restoreAppState() {
+  let saved;
+  try {
+    saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+  } catch (e) {
+    return false;
+  }
+  if (!saved) return false;
+  return applyAppState(saved, { save: false });
+}
+
+const FULL_BACKUP_VERSION = 1;
+const PRE_RESET_BACKUP_KEY = "automatskiTroskovnikPreResetBackupV1";
+
+function collectFullBackup() {
+  return {
+    backupVersion: FULL_BACKUP_VERSION,
+    createdAt: new Date().toISOString(),
+    appVersion: "v100",
+    appState: collectAppState(),
+    userPresets: getUserPresets(),
+    userPresetStorageKey: USER_PRESETS_KEY,
+    lastAppStateRaw: (() => {
+      try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+    })()
+  };
+}
+
+function downloadJsonFile(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function exportFullBackup() {
+  const data = collectFullBackup();
+  const now = new Date();
+  const pad2 = n => String(n).padStart(2, "0");
+  const date =
+    now.getFullYear() + "-" +
+    pad2(now.getMonth() + 1) + "-" +
+    pad2(now.getDate()) + "_" +
+    pad2(now.getHours()) + "-" +
+    pad2(now.getMinutes());
+
+  downloadJsonFile(`Troskovnik_backup_${date}.json`, data);
+  showCopyMessage("Backup je izvezen.");
+}
+
+async function importFullBackup(file) {
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+
+    if (!data || typeof data !== "object" || !data.appState) {
+      alert("Odabrana datoteka nije valjani backup troškovnika.");
+      return;
+    }
+
+    if (!confirm("Uvoz backupa zamijenit će trenutno spremljeno stanje i moje tipske priključke. Nastaviti?")) {
+      if ($("backupFileInput")) $("backupFileInput").value = "";
+      return;
+    }
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data.appState));
+      if (data.userPresets && typeof data.userPresets === "object") {
+        saveUserPresets(data.userPresets);
+      }
+    } catch (e) {
+      console.warn("Import backupa nije moguće spremiti u localStorage.", e);
+    }
+
+    refreshPresetSelect();
+
+    // Restore all fields from imported appState directly.
+    const saved = data.appState;
+    restoringState = true;
+
+    $("projectName").value = saved.projectName ?? "";
+    if ($("connectionPreset")) $("connectionPreset").value = saved.connectionPreset ?? "";
+    if ($("requestType")) $("requestType").value = saved.requestType ?? "";
+    $("connectionType").value = saved.connectionType ?? "";
+    $("phases").value = saved.phases ?? "";
+    $("cabinet").value = saved.cabinet ?? "";
+    $("plant").value = saved.plant ?? "";
+    $("intermediate").value = saved.intermediate ?? "";
+    $("km").value = saved.km ?? "0";
+    $("cable1").value = saved.cable1 ?? "0";
+    $("cable2").value = saved.cable2 ?? "0";
+    updateCabinetLocationOptions(saved.cabinetLocation ?? "");
+    if ($("meterRelocation")) $("meterRelocation").value = saved.meterRelocation ?? "";
+    if ($("propertyRights")) $("propertyRights").value = saved.propertyRights ?? "NE";
+    if ($("connectionDescription")) $("connectionDescription").value = saved.connectionDescription ?? "";
+    if ($("additionalConditions")) $("additionalConditions").value = saved.additionalConditions ?? "";
+    if ($("materialSearch")) $("materialSearch").value = saved.materialSearch ?? "";
+    $("showAll").checked = !!saved.showAll;
+    $("showManualOnly").checked = !!saved.showManualOnly;
+    if ($("hidePrices")) $("hidePrices").checked = !!saved.hidePrices;
+
+    for (const key of Object.keys(corrections)) delete corrections[key];
+    Object.assign(corrections, saved.corrections || {});
+    for (const key of Object.keys(manualComments)) delete manualComments[key];
+    Object.assign(manualComments, saved.manualComments || {});
+
+    $("ommBody").innerHTML = "";
+    const savedOmms = Array.isArray(saved.omms) ? saved.omms : [];
+    if (savedOmms.length) {
+      for (const omm of savedOmms) addOMM(omm.power ?? "", omm.category ?? "Kućanstvo", !!omm.existing, omm.name ?? "");
+    } else {
+      addOMM("", "Kućanstvo");
+    }
+
+    restoringState = false;
+    updateCableFields();
+    applyPriceVisibility();
+    calculate();
+
+    showCopyMessage("Backup je uspješno uvezen.");
+  } catch (e) {
+    console.error(e);
+    alert("Backup nije moguće učitati. Provjeri JSON datoteku.");
+  } finally {
+    if ($("backupFileInput")) $("backupFileInput").value = "";
+  }
+}
+
+function createPreResetBackup() {
+  try {
+    localStorage.setItem(PRE_RESET_BACKUP_KEY, JSON.stringify({
+      createdAt: new Date().toISOString(),
+      appState: collectAppState(),
+      userPresets: getUserPresets()
+    }));
+  } catch (e) {
+    console.warn("Sigurnosna kopija prije reseta nije spremljena.", e);
+  }
+}
+
+function restorePreResetBackup() {
+  let backup = null;
+  try {
+    backup = JSON.parse(localStorage.getItem(PRE_RESET_BACKUP_KEY) || "null");
+  } catch (e) {}
+
+  if (!backup?.appState) {
+    alert("Nema spremljene sigurnosne kopije prije reseta.");
+    return;
+  }
+
+  if (!confirm("Vratiti stanje prije zadnjeg reseta?")) return;
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(backup.appState));
+    if (backup.userPresets) saveUserPresets(backup.userPresets);
+  } catch (e) {}
+
+  // Re-use import-like restore by reloading state manually.
+  const saved = backup.appState;
+  restoringState = true;
+
+  $("projectName").value = saved.projectName ?? "";
+  if ($("connectionPreset")) $("connectionPreset").value = saved.connectionPreset ?? "";
+  if ($("requestType")) $("requestType").value = saved.requestType ?? "";
+  $("connectionType").value = saved.connectionType ?? "";
+  $("phases").value = saved.phases ?? "";
+  $("cabinet").value = saved.cabinet ?? "";
+  $("plant").value = saved.plant ?? "";
+  $("intermediate").value = saved.intermediate ?? "";
+  $("km").value = saved.km ?? "0";
+  $("cable1").value = saved.cable1 ?? "0";
+  $("cable2").value = saved.cable2 ?? "0";
+  updateCabinetLocationOptions(saved.cabinetLocation ?? "");
+  if ($("meterRelocation")) $("meterRelocation").value = saved.meterRelocation ?? "";
+  if ($("propertyRights")) $("propertyRights").value = saved.propertyRights ?? "NE";
+  if ($("connectionDescription")) $("connectionDescription").value = saved.connectionDescription ?? "";
+  if ($("materialSearch")) $("materialSearch").value = saved.materialSearch ?? "";
+  $("showAll").checked = !!saved.showAll;
+  $("showManualOnly").checked = !!saved.showManualOnly;
+  if ($("hidePrices")) $("hidePrices").checked = !!saved.hidePrices;
+
+  for (const key of Object.keys(corrections)) delete corrections[key];
+  Object.assign(corrections, saved.corrections || {});
+  for (const key of Object.keys(manualComments)) delete manualComments[key];
+  Object.assign(manualComments, saved.manualComments || {});
+
+  $("ommBody").innerHTML = "";
+  const savedOmms = Array.isArray(saved.omms) ? saved.omms : [];
+  if (savedOmms.length) {
+    for (const omm of savedOmms) addOMM(omm.power ?? "", omm.category ?? "Kućanstvo", !!omm.existing, omm.name ?? "");
+  } else {
+    addOMM("", "Kućanstvo");
+  }
+
+  refreshPresetSelect();
+  restoringState = false;
+  updateCableFields();
+  applyPriceVisibility();
+  calculate();
+  showCopyMessage("Vraćeno je stanje prije reseta.");
+}
+
+function sanitizeFilename(value) {
+  return String(value || "")
+    .trim()
+    .replace(/[\\/:*?"<>|]+/g, "_")
+    .replace(/\s+/g, "_")
+    .slice(0, 80);
+}
+
+// ==================== OMM LOGIKA ====================
+function getOMMs() {
+  return [...document.querySelectorAll("#ommBody tr")]
+    .map(row => ({
+      name: row.querySelector(".ommName")?.value || "",
+      power: num(row.querySelector(".ommPower").value),
+      category: row.querySelector(".ommCategory").value,
+      existing: !!row.querySelector(".ommExisting")?.checked
+    }))
+    .filter(omm => omm.power > 0);
+}
+
+function getState() {
+  return {
+    requestType: $("requestType")?.value ?? "",
+    type: $("connectionType").value,
+    phases: num($("phases").value),
+    cabinet: $("cabinet").value,
+    // Čuvamo stvarnu odabranu vrijednost jer KSVP s baterijom nije isto što i postojeći NN priključak.
+    plant: $("plant").value,
+    intermediate: $("intermediate").value,
+    km: num($("km").value),
+    cable1: num($("cable1").value),
+    cable2: num($("cable2").value),
+    omms: getOMMs()
+  };
+}
+
+function makeContext(state) {
+  const totalPower = state.omms.reduce((sum, omm) => sum + omm.power, 0);
+
+  // Odvojene snage postojećih i novih OMM-a.
+  // Ukupna snaga ostaje dostupna formulama materijala, a obračun po kW koristi samo newPower.
+  const newOmms = state.omms.filter(omm => !omm.existing);
+  const existingOmms = state.omms.filter(omm => omm.existing);
+  const newPower = newOmms.reduce((sum, omm) => sum + omm.power, 0);
+  const existingPower = existingOmms.reduce((sum, omm) => sum + omm.power, 0);
+  const spmoOMMCount = state.omms.filter(omm =>
+    omm.power > 50 && ["Kućanstvo", "Poduzetništvo"].includes(omm.category)
+  ).length;
+  const standardCabinetOMMCount = state.omms.length - spmoOMMCount;
+
+  const countPower = power =>
+    state.omms.filter(omm => nearlyEqual(omm.power, power)).length;
+
+  const countCategoryPower = (power, category) =>
+    state.omms.filter(
+      omm => nearlyEqual(omm.power, power) && omm.category === category
+    ).length;
+
+  const countNewPower = power =>
+    newOmms.filter(omm => nearlyEqual(omm.power, power)).length;
+
+  const countNewCategoryPower = (power, category) =>
+    newOmms.filter(
+      omm => nearlyEqual(omm.power, power) && omm.category === category
+    ).length;
+
+  return {
+    ...state,
+    totalPower,
+    newPower,
+    existingPower,
+    ommCount: state.omms.length,
+    spmoOMMCount,
+    standardCabinetOMMCount,
+    existing: state.plant === "Postojeći NN priključak",
+    isOverhead: state.type === "Nadzemni",
+    isUnderground: state.type === "Podzemni",
+    isCombined: state.type === "Nadzemni-Podzemni",
+    countPower,
+    // Brojila (retci 17–21) računaju se samo za NOVA OMM mjesta.
+    // Kod statusa "Postojeći NN priključak" troškovnik mora sadržavati brojilo,
+    // pa se za odabir brojila računaju sva OMM mjesta (zamjena postojećeg brojila).
+    household: power => state.plant === "Postojeći NN priključak" ? countCategoryPower(power, "Kućanstvo") : countNewCategoryPower(power, "Kućanstvo"),
+    business: power => state.plant === "Postojeći NN priključak" ? countCategoryPower(power, "Poduzetništvo") : countNewCategoryPower(power, "Poduzetništvo"),
+    plantOMM: power => state.plant === "Postojeći NN priključak" ? countCategoryPower(power, "Elektrana") : countNewCategoryPower(power, "Elektrana"),
+
+    // Tipkalo i PGP kabel moraju imati SVA OMM mjesta, i postojeća i nova,
+    // uključujući OMM-e s vlastitom netipskom snagom.
+    knownOMMCount: state.omms.length
+  };
+}
+
+function cabinetQuantity(row, ctx, c) {
+  const { cabinet, standardCabinetOMMCount: ommCount, phases, existing } = ctx;
+
+  switch (row) {
+    case 22: return (cabinet === "KPMO" && ommCount === 1 && phases === 1 ? 1 : 0) + c;
+    case 23: return c;
+    case 24: return (cabinet === "KPMO" && ommCount === 1 && phases === 3 && !existing ? 1 : 0) + c;
+    case 25: return c;
+    case 26: return (cabinet === "KPMO" && ommCount === 2 && !existing ? 1 : 0) + c;
+    case 27: return (cabinet === "KPMO" && ommCount > 2 && !existing ? 1 : 0) + c;
+    case 28: return (cabinet === "SKPMO" && ommCount === 1 ? 1 : 0) + c;
+    case 29: return (cabinet === "SKPMO" && ommCount === 2 ? 1 : 0) + c;
+    case 30: return (cabinet === "SKPMO" && ommCount > 2 ? 1 : 0) + c;
+    case 31: return c;
+    default: return null;
+  }
+}
+
+function calculateAuto(row, ctx) {
+  // Ručni unos više se ne zbraja s automatskom količinom.
+  // Automatski izračun uvijek računa samo osnovnu količinu.
+  const c = 0;
+  const {
+    totalPower: P,
+    phases,
+    cabinet,
+    existing,
+    isOverhead,
+    isUnderground,
+    isCombined,
+    km,
+    cable1: c1,
+    cable2: c2,
+    intermediate,
+    omms,
+    countPower: L,
+    household: H,
+    business: B,
+    plantOMM: E,
+    knownOMMCount
+  } = ctx;
+
+  // V105 — za status "Postojeći NN priključak" dopuštene su isključivo:
+  // brojilo (17–21), rad radnika (64), rad inženjera (65) i auto km (66).
+  // Sve ostale automatske stavke moraju biti 0.
+  if (existing && !([17,18,19,20,21,64,65,66].includes(row))) return 0;
+
+  const cabinetResult = cabinetQuantity(row, ctx, c);
+  if (cabinetResult !== null) return cabinetResult;
+
+  switch (row) {
+    case 17: return H(4.6) + H(5.75) + H(7.36) + H(9.2) + c;
+    case 18: return E(4.6) + E(5.75) + E(7.36) + E(9.2) + c;
+    case 19: return B(11.04) + B(13.8) + B(17.25) + B(22.08) +
+                    E(11.04) + E(13.8) + E(17.25) + E(22.08) + c;
+    case 20: return B(4.6) + B(5.75) + B(7.36) + B(9.2) + c;
+    case 21: return H(11.04) + H(13.8) + H(17.25) + H(22.08) + c;
+
+    case 32: return L(4.6) + L(5.75) + (L(11.04) + L(13.8)) * 3 + c;
+    case 33: return L(7.36) + (L(17.25) + L(22.08)) * 3;
+    case 34: {
+      const fuse50Count = omms.filter(omm => omm.power > 24 && omm.power <= 33).length * 3;
+      return fuse50Count + c + L(9.2);
+    }
+    // Stari osigurač 63 A ostaje dostupan samo za ručnu korekciju.
+    // Automatske količine za snage iznad 33 kW vode nove NH stavke 118–120.
+    case 35: return c;
+
+    case 36:
+      return (phases === 1 && (isOverhead || isCombined || !existing) ? c1 : 0) + c;
+    case 38:
+      return ((isOverhead || isCombined) && P > 50 ? c1 : 0) + c;
+    case 37:
+      return (phases === 3 && (isOverhead || isCombined || !existing) ? c1 : 0) + c - resultAuto(38);
+
+    case 40:
+      return (isUnderground && P > 75 && P <= 100 ? c2 : 0) + c;
+    case 39:
+      return ((isUnderground || isCombined) && P <= 75 && !existing ? c2 : 0) + c - resultAuto(40);
+    case 41:
+      return isUnderground && P > 100 ? c2 : 0;
+
+    case 42:
+      return (!existing
+        ? [22,23,24,25,26,27,28,29,30,31,100,110].reduce((sum, r) => sum + resultAuto(r), 0)
+        : 0) + c;
+
+    case 43: return knownOMMCount + c;
+    case 44: return resultAuto(43) + c;
+    case 45: return (c1 > 0 && isOverhead ? 1 : 0) + c;
+
+    case 46:
+      return (!existing && (resultAuto(36) !== 0 || resultAuto(37) !== 0)
+        ? (phases === 1 ? 2 : phases === 3 ? 4 : 0)
+        : 0) + c;
+
+    case 48: return c;
+
+    case 47:
+      return ((resultAuto(36) !== 0 || resultAuto(37) !== 0)
+        ? (phases === 1 ? 2 : phases === 3 ? 4 : -resultAuto(48))
+        : 0) + c;
+
+    case 49:
+      return ((resultAuto(39) !== 0 || resultAuto(38) !== 0) ? 4 : 0) + c - resultAuto(48);
+
+    // Stezaljka 0414030075: 4 komada kada je aktivan bilo koji kabel 4x25
+    // (SKS 4x25 ili XP00-A 4x25).
+    case 50:
+      return ((resultAuto(38) !== 0 || resultAuto(39) !== 0) ? 4 : 0) + c;
+
+    case 51:
+      return (!existing && (resultAuto(36) || resultAuto(37) || resultAuto(38)) && isOverhead ? 2 + c : 0);
+    case 52:
+      return ((resultAuto(36) || resultAuto(37) || resultAuto(38)) && isOverhead ? 1 : 0) + c;
+    case 53:
+      return (!existing && (resultAuto(36) || resultAuto(37) || resultAuto(38)) && isOverhead ? 5 + c : 0);
+    case 54:
+      return (!existing && resultAuto(59) > 0 ? 5 : 0) + c;
+    case 55:
+      return (c1 > 0 && isOverhead ? 10 : 0) + c;
+    case 56:
+      return (!existing && resultAuto(59) > 0 ? 3 : 0) + c;
+    case 57:
+      return resultAuto(59) * 2 + c;
+    case 58:
+      return resultAuto(59) + c;
+    case 59:
+      return (!existing
+        ? [22,23,24,25,26,27,100].reduce((sum, r) => sum + resultAuto(r), 0)
+        : 0) + c;
+
+    // Zemljani radovi postoje samo za podzemni ili kombinirani priključak.
+    // Kod čistog nadzemnog priključka nema ručnog/strojnog iskopa ni zatrpavanja.
+    case 60: {
+      if (isOverhead || c2 <= 0) return 0;
+      const basis =
+        isUnderground ? c2 :
+        isCombined ? (c2 <= 15 ? 2 : c2 - 13) :
+        0;
+      return Math.max(basis * 0.1, 2);
+    }
+
+    case 61:
+      if (isOverhead) return 0;
+      if (c2 <= 0) return c;
+      return (isUnderground ? c2 : isCombined ? (c2 <= 15 ? 2 : c2 - 13) : 0) + c;
+
+    case 62: return 0;
+
+    case 63:
+      return (!existing
+        ? [28,29,30,31,110].reduce((sum, r) => sum + resultAuto(r), 0)
+        : 0) + c;
+
+    case 64:
+      // Rad radnika:
+      // Nadzemni priključak u KPMO = 8 h
+      // Postojeći NN priključak = 4 h
+      // Bez kabela = 4 h
+      // Podzemni / kombinirani = 12 h
+      if (isOverhead && cabinet === "KPMO") return 8 + c;
+      if (existing) return 4 + c;
+      if (c1 === 0 && c2 === 0) return 4 + c;
+      if (isUnderground || isCombined) return 12 + c;
+      return 4 + c;
+
+    case 65:
+      // ZWM=AAA220000 — Rad inženjera:
+      // KSVP s baterijom BEZ izoliranog pogona = 1 h.
+      // KSVP s baterijom ZA izolirani pogon = 16 h.
+      // Za ostale slučajeve ostaje 1 h.
+      return String(ctx.plant || "").trim() === "KSVP s baterijom za izolirani pogon" ? 16 : 1;
+
+    case 66:
+      return ((c1 === 0 && c2 === 0)
+        ? roundUp(km * 2)
+        : (existing ? roundUp(km * 2) : 0)) + c;
+
+    case 68:
+      return (cabinet === ""
+        ? 0
+        : (!existing && (isOverhead || isCombined) ? roundUp(km * 2) : 0)) + c;
+
+    case 67:
+      return (resultAuto(68) > 0 ? 1 : 0) + c;
+
+    case 69:
+      return ((c1 === 0 && c2 === 0)
+        ? 0
+        : (!existing ? roundUp(km * 2) : 0)) + c;
+
+    case 70: return (!existing && intermediate === "SD" ? 1 : 0) + c;
+    case 71: return resultAuto(70) + c;
+    case 72: return resultAuto(70) + c;
+    case 73: return resultAuto(70) + c;
+    case 74: return c;
+
+    case 75: return c2 > 0 && c1 > 0 && isCombined ? 1 : 0;
+    case 76: return c2 > 0 && c1 > 0 && isCombined ? 4 : 0;
+
+    case 77: return (c2 !== 0 && (isCombined || isUnderground) ? 1 : 0) + c;
+    case 78: return (resultAuto(63) !== 0 && (cabinet === "SKRO" || isCombined || isUnderground) ? 2 : 0) + c;
+
+    case 79: return (c2 > 0 && !existing && isCombined ? 0.4 : 0) + c;
+    case 80: return (c2 > 0 && !existing && isCombined ? 10 : 0) + c;
+    case 81: return (c2 > 0 && !existing && isCombined ? 7 : 0) + c;
+    case 82: return (c2 > 0 && !existing && isCombined ? 2 : 0) + c;
+
+    case 83: {
+      if (c2 <= 0) return 0;
+      const base = isUnderground
+        ? resultAuto(39)
+        : (isCombined && c2 > 15 ? resultAuto(39) - 13 : 0);
+      return base + c;
+    }
+
+    case 84: {
+      if (c2 <= 0) return 0;
+      const base = isUnderground
+        ? resultAuto(39)
+        : (isCombined && c2 > 15 ? resultAuto(39) - 13 : 0);
+      return (base + c) * 1.1;
+    }
+
+    case 85: return resultAuto(84);
+    case 86: return c;
+    case 87: return Math.round(resultAuto(86) / 2) + c;
+
+    case 88:
+    case 89:
+    case 90:
+    case 91:
+    case 92:
+    case 93:
+    case 94:
+    case 95:
+    case 96:
+    case 97:
+    case 98:
+    case 99:
+      return c;
+
+    case 100:
+      return (cabinet === "KRO" || cabinet === "KPO" ? 1 : 0) + c;
+
+    case 101: return intermediate === "SB 315/10" ? 1 : 0;
+    case 102: return (intermediate === "SB 315/10" || intermediate === "SB 650/10") ? 1 : 0;
+    case 103: return intermediate === "SB 315/10" ? 2 : 0;
+    case 104: return intermediate === "SB 315/10" ? 1 : 0;
+    case 105: return intermediate === "SB 315/10" ? 1 : 0;
+    case 106: return intermediate === "SB 650/10" ? 1 : 0;
+    case 107: return intermediate === "SB 650/10" ? 2 : 0;
+    case 108: return intermediate === "SB 650/10" ? 1 : 0;
+    case 109: return intermediate === "SB 650/10" ? 1 : 0;
+
+    case 110: return cabinet === "SKRO" ? 1 : 0;
+
+    // Za svaki OMM Kućanstva ili Poduzetništva snage veće od 50 kW
+    // dodaju se zaseban SPMO s ugrađenim SMT i intervalno 3f brojilo.
+    case 116:
+    case 117:
+      return ctx.spmoOMMCount;
+
+    // NH (NV) 1 osigurači: tri komada za svaki trofazni OMM.
+    case 118:
+      return omms.filter(omm => omm.power > 33 && omm.power <= 43).length * 3 + c;
+    case 119:
+      return omms.filter(omm => omm.power > 43 && omm.power <= 55).length * 3 + c;
+    case 120:
+      return omms.filter(omm => omm.power > 55 && omm.power <= 69).length * 3 + c;
+
+    default:
+      return c;
+  }
+}
+
+function togglePresetPanel(forceState) {
+  const panel = $("presetPanel");
+  if (!panel) return;
+  const shouldOpen = typeof forceState === "boolean"
+    ? forceState
+    : !panel.classList.contains("open");
+
+  panel.classList.toggle("open", shouldOpen);
+  panel.setAttribute("aria-hidden", shouldOpen ? "false" : "true");
+}
+
+document.addEventListener("click", function(e) {
+  const wrap = $("presetFabWrap");
+  const panel = $("presetPanel");
+  if (wrap && panel && panel.classList.contains("open") && !wrap.contains(e.target)) {
+    togglePresetPanel(false);
+  }
+});
+
+// ==================== TIPSKI PRIKLJUČCI ====================
+const BUILTIN_CONNECTION_PRESETS = {
+  ees_novi_nadzemni_1f_kpmo_25: {
+    name: "EES - novi · Nadzemni · 1F · KPMO · 25 m kabela",
+    requestType: "EES - novi priključak",
+    connectionType: "Nadzemni",
+    phases: "1",
+    cabinet: "KPMO",
+    plant: "NE",
+    intermediate: "",
+    km: "0",
+    cable1: "25",
+    cable2: "0"
+  }
+};
+
+const USER_PRESETS_KEY = "automatskiTroskovnikUserPresetsV1";
+
+function getUserPresets() {
+  try {
+    return JSON.parse(localStorage.getItem(USER_PRESETS_KEY) || "{}");
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveUserPresets(presets) {
+  localStorage.setItem(USER_PRESETS_KEY, JSON.stringify(presets));
+}
+
+function getAllConnectionPresets() {
+  return {
+    ...BUILTIN_CONNECTION_PRESETS,
+    ...getUserPresets()
+  };
+}
+
+function refreshPresetSelect(selectedKey = "") {
+  const select = $("connectionPreset");
+  if (!select) return;
+
+  const userPresets = getUserPresets();
+  const options = [
+    '<option value="">— odaberi —</option>',
+    '<optgroup label="Ugrađeni tipski priključci">',
+    ...Object.entries(BUILTIN_CONNECTION_PRESETS).map(([key, preset]) =>
+      `<option value="${key}">${escapeHtml(preset.name || key)}</option>`
+    ),
+    '</optgroup>'
+  ];
+
+  const userEntries = Object.entries(userPresets);
+  if (userEntries.length) {
+    options.push('<optgroup label="Moji tipski priključci">');
+    for (const [key, preset] of userEntries) {
+      options.push(`<option value="${key}">${escapeHtml(preset.name || key)}</option>`);
+    }
+    options.push('</optgroup>');
+  }
+
+  select.innerHTML = options.join("");
+  if (selectedKey && getAllConnectionPresets()[selectedKey]) {
+    select.value = selectedKey;
+  }
+}
+
+function snapshotCurrentConnectionForPreset() {
+  return {
+    name: "",
+    requestType: $("requestType")?.value || "",
+    connectionType: $("connectionType")?.value || "",
+    phases: $("phases")?.value || "",
+    cabinet: $("cabinet")?.value || "",
+    plant: $("plant")?.value || "",
+    intermediate: $("intermediate")?.value || "",
+    km: $("km")?.value || "0",
+    cable1: $("cable1")?.value || "0",
+    cable2: $("cable2")?.value || "0",
+    cabinetLocation: $("cabinetLocation")?.value || "",
+    meterRelocation: $("meterRelocation")?.value || "",
+    propertyRights: $("propertyRights")?.value || "NE",
+    omms: [...document.querySelectorAll("#ommBody tr")].map(row => ({
+      name: row.querySelector(".ommName")?.value || "",
+      power: row.querySelector(".ommPower")?.value || "",
+      category: row.querySelector(".ommCategory")?.value || "Kućanstvo",
+      existing: !!row.querySelector(".ommExisting")?.checked
+    }))
+  };
+}
+
+function saveCurrentAsPreset() {
+  const name = String($("newPresetName")?.value || "").trim();
+  if (!name) {
+    alert("Unesi naziv tipskog priključka.");
+    return;
+  }
+
+  const preset = snapshotCurrentConnectionForPreset();
+
+  if (!preset.requestType && !preset.connectionType && !preset.cabinet && !preset.omms.some(x => x.power)) {
+    alert("Prvo unesi podatke priključka koje želiš spremiti.");
+    return;
+  }
+
+  const userPresets = getUserPresets();
+  const key = "user_" + Date.now();
+  preset.name = name;
+  userPresets[key] = preset;
+  saveUserPresets(userPresets);
+
+  refreshPresetSelect(key);
+  $("newPresetName").value = "";
+  showCopyMessage("Tipski priključak je spremljen.");
+}
+
+function deleteSelectedPreset() {
+  const key = $("connectionPreset")?.value || "";
+  if (!key) {
+    alert("Odaberi tipski priključak koji želiš obrisati.");
+    return;
+  }
+
+  if (BUILTIN_CONNECTION_PRESETS[key]) {
+    alert("Ugrađeni tipski priključak nije moguće obrisati.");
+    return;
+  }
+
+  const userPresets = getUserPresets();
+  if (!userPresets[key]) return;
+
+  delete userPresets[key];
+  saveUserPresets(userPresets);
+  refreshPresetSelect();
+  showCopyMessage("Tipski priključak je obrisan.");
+}
+
+function applyConnectionPreset(key) {
+  if (!key) return;
+  pushUndoState();
+
+  const preset = getAllConnectionPresets()[key];
+  if (!preset) return;
+
+  $("requestType").value = preset.requestType || "";
+  $("connectionType").value = preset.connectionType || "";
+  $("phases").value = preset.phases || "";
+  $("cabinet").value = preset.cabinet || "";
+  $("plant").value = preset.plant || "";
+  $("intermediate").value = preset.intermediate || "";
+  $("km").value = preset.km ?? "0";
+  $("cable1").value = preset.cable1 ?? "0";
+  $("cable2").value = preset.cable2 ?? "0";
+
+  $("ommBody").innerHTML = "";
+  const omms = Array.isArray(preset.omms) && preset.omms.length
+    ? preset.omms
+    : [{ power: "", category: "Kućanstvo", existing: false }];
+
+  for (const omm of omms) {
+    addOMM(omm.power ?? "", omm.category ?? "Kućanstvo", !!omm.existing, omm.name ?? "");
+  }
+
+  updateCableFields();
+  updateCabinetLocationOptions?.(preset.cabinetLocation || "");
+
+  if ($("meterRelocation")) $("meterRelocation").value = preset.meterRelocation || "";
+  if ($("propertyRights")) $("propertyRights").value = preset.propertyRights || "NE";
+
+  calculate();
+
+  if ($("connectionDescription")) {
+    $("connectionDescription").value = "";
+    generateConnectionDescription?.();
+  }
+
+  scheduleSave?.();
+}
+
+function clearConnectionPreset() {
+  if ($("connectionPreset")) $("connectionPreset").value = "";
+}
+
+function updateCabinetOptionsByConnectionType() {
+  const type = $("connectionType")?.value || "";
+  const cabinet = $("cabinet");
+  if (!cabinet) return;
+
+  const current = cabinet.value;
+
+  const allowed = type === "Nadzemni"
+    ? ["", "KPMO", "KRO"]
+    : type === "Podzemni" || type === "Nadzemni-Podzemni"
+      ? ["", "KPMO", "KRO", "SKPMO", "SKRO"]
+      : ["", "KPMO", "KRO", "SKPMO", "SKRO"];
+
+  [...cabinet.options].forEach(option => {
+    option.hidden = !allowed.includes(option.value);
+    option.disabled = !allowed.includes(option.value);
+  });
+
+  if (!allowed.includes(current)) {
+    cabinet.value = "";
+  }
+}
+
+function updateCableFields() {
+  updateCabinetOptionsByConnectionType();
+  const type = $("connectionType").value;
+  const cable1 = $("cable1");
+  const cable2 = $("cable2");
+
+  // Međustup je uvijek ručni odabir, uključujući Nadzemni → Podzemni.
+  $("intermediate").disabled = false;
+
+  if (type === "Nadzemni") {
+    cable1.disabled = false;
+    cable2.value = 0;
+    cable2.disabled = true;
+  } else if (type === "Podzemni") {
+    cable1.value = 0;
+    cable1.disabled = true;
+    cable2.disabled = false;
+  } else {
+    // Bez odabira ili Nadzemni-Podzemni
+    cable1.disabled = false;
+    cable2.disabled = false;
+  }
+}
+
+function getCabinetStatus(ctx) {
+  const standardCount = ctx.standardCabinetOMMCount ?? ctx.ommCount;
+  const spmoCount = ctx.spmoOMMCount ?? 0;
+  const cabinetParts = [];
+
+  // KPMO/SKPMO dimenzionira se samo prema OMM-ima koji nemaju zaseban SPMO.
+  if (standardCount > 0 && ctx.cabinet === "KPMO") {
+    if (standardCount > 2) cabinetParts.push("KPMO 3");
+    else if (standardCount === 2) cabinetParts.push("KPMO 2");
+    else cabinetParts.push("KPMO 0");
+  } else if (standardCount > 0 && ctx.cabinet === "SKPMO") {
+    if (standardCount > 2) cabinetParts.push("SKPMO 3");
+    else if (standardCount === 2) cabinetParts.push("SKPMO 2");
+    else cabinetParts.push("SKPMO 1");
+  } else if (standardCount > 0 && ctx.cabinet) {
+    cabinetParts.push(ctx.cabinet);
+  }
+
+  if (spmoCount > 0) {
+    cabinetParts.push(spmoCount === 1
+      ? "SPMO s ugrađenim SMT"
+      : `${spmoCount} × SPMO s ugrađenim SMT`);
+  }
+
+  // Dok nema nijednog OMM-a, zadrži prikaz ručno odabrane vrste ormara.
+  if (!cabinetParts.length && ctx.ommCount === 0 && ctx.cabinet) return ctx.cabinet;
+  return cabinetParts.join(" + ") || "—";
+}
+
+function updateStatusBar(ctx) {
+  // Statusna traka je uklonjena iz prikaza.
+}
+
+// ==================== IZRAČUN TROŠKOVNIKA ====================
+function calculate() {
+  updateCabinetOptionsByConnectionType();
+  updateCableFields();
+  const ctx = makeContext(getState());
+  results = Object.create(null);
+
+  // Nekoliko Excel formula ovisi o kasnijim redovima, zato računamo u više prolaza.
+  // Pet prolaza je dovoljno za postojeći lanac ovisnosti i čuva ponašanje izvornog koda.
+  for (let pass = 0; pass < 5; pass++) {
+    for (const item of ITEMS) {
+      const auto = calculateAuto(item.row, ctx);
+
+      const isExcavationRow = item.row === 60 || item.row === 61;
+      const hasManual = Object.prototype.hasOwnProperty.call(corrections, item.row);
+
+      // Redovi iskopa:
+      // Auto i ručna korekcija su DUŽNI METRI.
+      // Konačno je obračunska kubikaža: 0,4 × 0,8 × metri.
+      let final;
+      if (isExcavationRow) {
+        const metres = hasManual ? correction(item.row) : auto;
+        final = 0.4 * 0.8 * metres;
+      } else if (item.row === 62) {
+        // Zatrpavanje = ukupna kubikaža ručnog + strojnog iskopa.
+        final = resultFinal(60) + resultFinal(61);
+        if (hasManual) final = correction(item.row);
+      } else {
+        final = hasManual ? correction(item.row) : auto;
+      }
+
+      results[item.row] = { auto, final };
+    }
+  }
+
+  $("powerTotal").textContent = formatDecimal(ctx.totalPower) + " kW";
+  $("existingPowerTotal").textContent = formatDecimal(ctx.existingPower) + " kW";
+  $("newPowerTotal").textContent = formatDecimal(ctx.newPower) + " kW";
+  const newMeterCount = ctx.omms.filter(omm => !omm.existing).length;
+  $("ommCount").textContent = `${ctx.ommCount} (${newMeterCount} novih)`;
+  $("powerSummary").textContent = formatDecimal(ctx.newPower) + " kW";
+  updateStatusBar(ctx);
+
+  render(ctx);
+  updateCabinetLocationOptions();
+
+  if ($("connectionDescription") && !$("connectionDescription").value.trim()) {
+    generateConnectionDescription();
+  }
+
+  scheduleSave();
+}
+
+function clearMaterialSearch() {
+  if ($("materialSearch")) $("materialSearch").value = "";
+  render();
+  scheduleSave();
+}
+
+function materialMatchesSearch(item) {
+  const q = String($("materialSearch")?.value || "").trim().toLocaleLowerCase("hr-HR");
+  if (!q) return true;
+
+  const haystack = [
+    item.code,
+    item.desc,
+    item.note
+  ].join(" ").toLocaleLowerCase("hr-HR");
+
+  return haystack.includes(q);
+}
+
+function showManualItems() {
+  const checkbox = $("showManualOnly");
+  if (checkbox) checkbox.checked = true;
+  render();
+  scheduleSave?.();
+}
+
+function showAllActiveItems() {
+  const manual = $("showManualOnly");
+  const all = $("showAll");
+  if (manual) manual.checked = false;
+  if (all) all.checked = false;
+  render();
+  scheduleSave?.();
+}
+
+// ==================== PRIKAZ TROŠKOVNIKA ====================
+function render(ctx = makeContext(getState())) {
+  validateLogicalCombination();
+  const body = $("costBody");
+  const showAll = $("showAll").checked;
+  const showManualOnly = $("showManualOnly").checked;
+  const hasMaterialSearch = String($("materialSearch")?.value || "").trim().length > 0;
+  const fragment = document.createDocumentFragment();
+
+  const activeCount = ITEMS.filter(item =>
+    Math.abs(results[item.row]?.final ?? 0) > 0.000001
+  ).length;
+  const manualCount = ITEMS.filter(item =>
+    Object.prototype.hasOwnProperty.call(corrections, item.row)
+  ).length;
+  const automaticCount = ITEMS.filter(item =>
+    !Object.prototype.hasOwnProperty.call(corrections, item.row) &&
+    Math.abs(results[item.row]?.final ?? 0) > 0.000001
+  ).length;
+
+  const countBox = $("activeItemCount");
+  if (countBox) {
+    countBox.innerHTML =
+      `· <button type="button" class="count-filter" onclick="showAllActiveItems()" title="Prikaži aktivne stavke">${activeCount} ${activeCount === 1 ? "stavka" : "stavki"}</button>` +
+      ` · <span class="count-auto">${automaticCount} automatski</span>` +
+      ` · <button type="button" class="count-filter count-manual" onclick="showManualItems()" title="Prikaži samo ručno izmijenjene stavke">${manualCount} ručno</button>`;
+  }
+
+  let net = 0;
+
+  body.innerHTML = "";
+
+  for (const item of ITEMS) {
+    const rowResult = results[item.row] ?? { auto: 0, final: 0 };
+    const billedQty = rowResult.final;
+    const total = billedQty * item.price;
+    net += total;
+
+    const isManual = Object.prototype.hasOwnProperty.call(corrections, item.row);
+
+    if (!materialMatchesSearch(item)) continue;
+
+    // "Prikaži samo ručne izmjene" ima prednost nad filtrom nultih stavki:
+    // prikazuje svaku ručno diranu stavku, čak i kad je korekcija ili konačna količina 0.
+    if (showManualOnly && !isManual) continue;
+    // Aktivna pretraga prikazuje sve pronađene materijale, uključujući količinu 0.
+    if (!showManualOnly && !showAll && !hasMaterialSearch && Math.abs(rowResult.final) < 0.000001) continue;
+
+    const tr = document.createElement("tr");
+    if (rowResult.final > 0) tr.classList.add("active-row");
+    if (isManual) tr.classList.add("manual-row");
+
+    tr.innerHTML = `
+      <td class="code"><span class="code-with-copy"><span>${escapeHtml(item.code)}</span><button class="btn2 no-print copy-material-btn" type="button" title="Kopiraj šifru, naziv i količinu" aria-label="Kopiraj šifru, naziv i količinu" onclick="copyMaterialRow(${item.row})">⧉</button></span></td>
+      <td class="desc">${escapeHtml(item.desc)}${Object.prototype.hasOwnProperty.call(corrections, item.row) ? '<span class="manual-badge">RUČNO</span>' : ''}</td>
+      <td class="note">${escapeHtml(item.note)}</td>
+      <td class="auto">${formatQty(rowResult.auto)}</td>
+      <td>
+        <div class="qty-stepper no-print-control">
+          <button type="button" class="qty-step-btn" onclick="stepManualQty(${item.row}, -1)" title="${["3502010070","3502010120"].includes(item.code) ? "Smanji iskop za 1 m" : "Smanji količinu"}">−</button>
+          <input
+            class="num small decimal-input"
+            type="text"
+            inputmode="decimal"
+            lang="hr"
+            value="${isManual ? String(correction(item.row)).replace(".", ",") : ""}"
+            placeholder="—"
+            data-row="${item.row}"
+            oninput="normalizeDecimalInput(this)"
+            onchange="setCorrection(this)"
+            onblur="setCorrection(this)"
+            onkeydown="if(event.key==='Enter'){this.blur();}"
+          >
+          <button type="button" class="qty-step-btn" onclick="stepManualQty(${item.row}, 1)" title="${["3502010070","3502010120"].includes(item.code) ? "Povećaj iskop za 1 m" : "Povećaj količinu"}">+</button>
+        </div>
+      </td>
+      <td>
+        <input
+          class="manual-comment"
+          type="text"
+          value="${escapeHtml(manualComments[item.row] || "")}"
+          data-row="${item.row}"
+          placeholder="${isManual ? "npr. postojeći kabel" : "Dostupno kod ručne izmjene"}"
+          ${isManual ? "" : "disabled"}
+          onchange="setManualComment(this)"
+          onblur="setManualComment(this)"
+          onkeydown="if(event.key==='Enter'){this.blur();}"
+        >
+      </td>
+      <td class="final">${
+        isExcavationItem(item)
+          ? `${formatQty(rowResult.final)} m³`
+          : formatQty(rowResult.final)
+      }</td>
+      <td class="money price-col">${formatEuro(item.price)}</td>
+      <td class="money price-col"><b>${formatEuro(total)}</b></td>
+    `;
+    fragment.appendChild(tr);
+  }
+
+  body.appendChild(fragment);
+
+  const gross = net * (1 + VAT_RATE);
+
+  // V170 — obračun troška priključka vodi se prvenstveno vrstom zahtjeva.
+  // Šifrarnik: novi priključak = kW; premještaj = stvarni trošak;
+  // povećanje bez radova = kW; povećanje s izmještanjem/radovima = veći od kW i stvarnog;
+  // KSVP bez izoliranog pogona: 1F = 245 €, 3F = 345 € (poduzetništvo + PDV); izolirani pogon = stvarni trošak.
+  let connectionCost = 0;
+  let connectionCostLabel = "Trošak priključka";
+
+  const kwCost = ctx.newPower * 193 * (1 + VAT_RATE);
+  const hasRelocationWorks =
+    ctx.cable1 > 0 ||
+    ctx.cable2 > 0 ||
+    !!ctx.cabinet ||
+    (!!ctx.intermediate && ctx.intermediate !== "Postojeći međustup");
+  const hasBusinessOMM = ctx.omms.some(omm => omm.category === "Poduzetništvo");
+  const fixedKsvpBase = String(ctx.phases) === "1" ? 245 : String(ctx.phases) === "3" ? 345 : 0;
+  const fixedKsvpCost = fixedKsvpBase * (hasBusinessOMM ? (1 + VAT_RATE) : 1);
+
+  if (ctx.requestType === "Novi priključak" ||
+      ctx.requestType === "Gradilišni priključak" ||
+      ctx.requestType === "Privremeni priključak") {
+    connectionCostLabel = "Trošak po kW";
+    connectionCost = kwCost;
+
+  } else if (ctx.requestType === "Izmještanje brojila") {
+    connectionCostLabel = "Stvarni trošak";
+    connectionCost = gross;
+
+  } else if (ctx.requestType === "Povećanje priključne snage") {
+    if (hasRelocationWorks) {
+      connectionCostLabel = "Veći iznos (kW / stvarni trošak)";
+      connectionCost = Math.max(kwCost, gross);
+    } else {
+      connectionCostLabel = "Trošak po kW";
+      connectionCost = kwCost;
+    }
+
+  } else if (
+    ctx.requestType === "Kupac s vlastitom proizvodnjom" ||
+    ctx.requestType === "Povećanje snage elektrane"
+  ) {
+    connectionCostLabel = "Fiksni trošak KSVP";
+    connectionCost = fixedKsvpCost;
+
+  } else if (ctx.requestType === "Kupac s vlastitom proizvodnjom i baterijskim spremnikom energije") {
+    if (ctx.plant === "KSVP s baterijom za izolirani pogon") {
+      connectionCostLabel = "Stvarni trošak";
+      connectionCost = gross;
+    } else if (ctx.plant === "KSVP s baterijom bez izoliranog pogona") {
+      connectionCostLabel = "Fiksni trošak KSVP";
+      connectionCost = fixedKsvpCost;
+    }
+  }
+
+  if ($("net")) $("net").textContent = formatEuro(net);
+  if ($("gross")) $("gross").textContent = formatEuro(gross);
+  if ($("connectionCostLabel")) $("connectionCostLabel").textContent = connectionCostLabel;
+  if ($("kwPrice")) $("kwPrice").textContent = formatEuro(connectionCost);
+  applyPriceVisibility();
+}
+
+// ==================== SAP PDF ====================
+function generateSAPPdf() {
+  if (!window.pdfMake) {
+    alert("PDF modul se nije učitao. Provjeri internetsku vezu i pokušaj ponovno.");
+    return;
+  }
+
+  const activeItems = ITEMS
+    .map(item => ({
+      code: item.code,
+      desc: item.desc,
+      qty: results[item.row]?.final ?? 0
+    }))
+    .filter(item => Math.abs(item.qty) > 0.000001);
+
+  if (activeItems.length === 0) {
+    alert("Nema aktivnih stavki za PDF.");
+    return;
+  }
+
+  const body = activeItems.map(item => [
+    { text: item.code, noWrap: true },
+    { text: item.desc },
+    { text: formatQty(item.qty), alignment: "center", noWrap: true }
+  ]);
+
+  const now = new Date();
+  const projectCode = String($("projectName")?.value || "").trim();
+  const dateText = now.toLocaleDateString("hr-HR");
+
+  const pdfCtx = makeContext(getState());
+  const totalOmmCount = pdfCtx.omms.length;
+  const newOmmCount = pdfCtx.omms.filter(omm => !omm.existing).length;
+  const connectionTypeText =
+    pdfCtx.type === "Nadzemni-Podzemni" ? "Nadzemni → Podzemni" :
+    (pdfCtx.type || "—");
+  const phasesText = pdfCtx.phases ? `${pdfCtx.phases}F` : "—";
+  const cabinetTextPdf = getCabinetStatus(pdfCtx);
+  const plantText = pdfCtx.plant || "—";
+  const intermediateText = pdfCtx.intermediate || "—";
+
+  const technicalHeaderTable = {
+    table: {
+      widths: ["auto", "*", "auto", "*"],
+      body: [
+        [
+          { text: "Verzija:", bold: true },
+          { text: "Radna verzija v148", colSpan: 3 },
+          {},
+          {}
+        ],
+        [
+          { text: "Vrsta zahtjeva:", bold: true },
+          { text: $("requestType")?.value || "—" },
+          { text: "YC:", bold: true },
+          { text: projectCode || "—" }
+        ],
+        [
+          { text: "Broj OMM-ova:", bold: true },
+          { text: String(totalOmmCount) },
+          { text: "Novi OMM-ovi:", bold: true },
+          { text: String(newOmmCount) }
+        ],
+        [
+          { text: "Postojeća snaga:", bold: true },
+          { text: formatDecimal(pdfCtx.existingPower) + " kW" },
+          { text: "Nova snaga:", bold: true },
+          { text: formatDecimal(pdfCtx.newPower) + " kW" }
+        ],
+        [
+          { text: "Ukupna priključna snaga:", bold: true },
+          { text: formatDecimal(pdfCtx.totalPower) + " kW" },
+          { text: "Vrsta priključka:", bold: true },
+          { text: connectionTypeText }
+        ],
+        [
+          { text: "Faznost:", bold: true },
+          { text: phasesText },
+          { text: "Vrsta ormara:", bold: true },
+          { text: cabinetTextPdf }
+        ],
+        [
+          { text: "Elektrana / status:", bold: true },
+          { text: plantText },
+          { text: "Međustup:", bold: true },
+          { text: intermediateText }
+        ]
+      ]
+    },
+    layout: {
+      hLineWidth: function () { return 0.25; },
+      vLineWidth: function () { return 0.25; },
+      hLineColor: function () { return "#cbd5e1"; },
+      vLineColor: function () { return "#cbd5e1"; },
+      paddingLeft: function () { return 4; },
+      paddingRight: function () { return 4; },
+      paddingTop: function () { return 3; },
+      paddingBottom: function () { return 3; }
+    },
+    fontSize: 8,
+    margin: [0, 0, 0, 10]
+  };
+
+  const docDefinition = {
+    pageSize: "A4",
+    pageOrientation: "landscape",
+    pageMargins: [24, 22, 24, 24],
+    defaultStyle: {
+      font: "Roboto",
+      fontSize: 8,
+      lineHeight: 1.05
+    },
+    content: [
+      {
+        text: "TROŠKOVNIK",
+        fontSize: 15,
+        bold: true,
+        margin: [0, 0, 0, 4]
+      },
+      {
+        columns: [
+          { text: "" },
+          {
+            text: [
+              { text: "Datum: ", bold: true },
+              { text: dateText }
+            ],
+            alignment: "right"
+          }
+        ],
+        fontSize: 9,
+        margin: [0, 0, 0, 8]
+      },
+      technicalHeaderTable,
+      {
+        table: {
+          headerRows: 0,
+          dontBreakRows: true,
+          widths: [92, "*", 42],
+          body
+        },
+        layout: {
+          hLineWidth: function () { return 0.6; },
+          vLineWidth: function () { return 0.6; },
+          hLineColor: function () { return "#000000"; },
+          vLineColor: function () { return "#000000"; },
+          paddingLeft: function () { return 4; },
+          paddingRight: function () { return 4; },
+          paddingTop: function () { return 3; },
+          paddingBottom: function () { return 3; }
+        }
+      },
+      {
+        text: "TEHNIČKI OPIS PRIKLJUČKA",
+        pageBreak: "before",
+        fontSize: 15,
+        bold: true,
+        margin: [0, 0, 0, 4]
+      },
+      {
+        columns: [
+          { text: "" },
+          {
+            text: [
+              { text: "Datum: ", bold: true },
+              { text: dateText }
+            ],
+            alignment: "right"
+          }
+        ],
+        fontSize: 9,
+        margin: [0, 0, 0, 8]
+      },
+      technicalHeaderTable,
+      {
+        text: ($("connectionDescription")?.value || "Opis priključka nije generiran.").trim(),
+        fontSize: 10,
+        lineHeight: 1.35,
+        alignment: "justify",
+        margin: [0, 0, 0, 0]
+      }
+    ]
+  };
+  const pad = value => String(value).padStart(2, "0");
+  const rawProject = sanitizeFilename($("projectName")?.value);
+  const projectPart = rawProject
+    ? (rawProject.toUpperCase().startsWith("YC") ? rawProject : "YC" + rawProject)
+    : "YC";
+
+  const connectionTypeRaw = $("connectionType")?.value || "Prikljucak";
+  const connectionTypePart = sanitizeFilename(
+    connectionTypeRaw
+      .replace("Nadzemni-Podzemni", "Nadzemni-u-Podzemni")
+      .replace("Nadzemni → Podzemni", "Nadzemni-u-Podzemni")
+  );
+
+  const datePart =
+    now.getFullYear() +
+    "-" +
+    pad(now.getMonth() + 1) +
+    "-" +
+    pad(now.getDate());
+
+  const filename =
+    projectPart +
+    "_" +
+    connectionTypePart +
+    "_" +
+    datePart +
+    ".pdf";
+
+  pdfMake.createPdf(docDefinition).download(filename);
+}
+
+async function copyMaterialRow(row) {
+  const item = ITEMS.find(entry => entry.row === row);
+  if (!item) return;
+
+  const qty = results[row]?.final ?? 0;
+  const text = [
+    String(item.code).trim(),
+    String(item.desc).replace(/\s+/g, " ").trim(),
+    formatQty(qty)
+  ].join("\t");
+
+  try {
+    await navigator.clipboard.writeText(text);
+    showCopyMessage("Materijal je kopiran u međuspremnik.");
+  } catch (error) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    textarea.style.top = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    try {
+      document.execCommand("copy");
+      showCopyMessage("Materijal je kopiran u međuspremnik.");
+    } catch (fallbackError) {
+      alert("Kopiranje nije uspjelo. Označi podatke ručno.");
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+}
+
+async function copyToSAP() {
+  const activeItems = ITEMS
+    .map(item => ({
+      code: item.code,
+      desc: item.desc,
+      qty: results[item.row]?.final ?? 0
+    }))
+    .filter(item => Math.abs(item.qty) > 0.000001);
+
+  if (activeItems.length === 0) {
+    alert("Nema aktivnih stavki za kopiranje.");
+    return;
+  }
+
+  // Tab-delimited format: Šifra [TAB] Opis [TAB] Količina
+  // Svaka stavka ide u novi red, pa se pri lijepljenju u SAP raspoređuje po stupcima.
+  const sapText = activeItems
+    .map(item => [
+      String(item.code).trim(),
+      String(item.desc).replace(/\s+/g, " ").trim(),
+      formatQty(item.qty)
+    ].join("\t"))
+    .join("\n");
+
+  try {
+    await navigator.clipboard.writeText(sapText);
+    showCopyMessage("Troškovnik je kopiran u međuspremnik.");
+  } catch (error) {
+    // Fallback za preglednike/HTML datoteke koji ne dopuštaju Clipboard API.
+    const textarea = document.createElement("textarea");
+    textarea.value = sapText;
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    textarea.style.top = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    try {
+      document.execCommand("copy");
+      showCopyMessage("Troškovnik je kopiran u međuspremnik.");
+    } catch (fallbackError) {
+      alert("Kopiranje nije uspjelo. Označi tekst ručno.");
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+}
+
+function showCopyMessage(message) {
+  let toast = document.getElementById("copyToast");
+
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "copyToast";
+    toast.style.position = "fixed";
+    toast.style.right = "22px";
+    toast.style.bottom = "22px";
+    toast.style.background = "#198754";
+    toast.style.color = "#fff";
+    toast.style.padding = "12px 16px";
+    toast.style.borderRadius = "8px";
+    toast.style.fontWeight = "700";
+    toast.style.boxShadow = "0 4px 14px rgba(0,0,0,.18)";
+    toast.style.zIndex = "9999";
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.style.display = "block";
+
+  clearTimeout(window.copyToastTimer);
+  window.copyToastTimer = setTimeout(() => {
+    toast.style.display = "none";
+  }, 2200);
+}
+
+function resetManualCorrections() {
+  if (!Object.keys(corrections).length) { showCopyMessage("Nema ručnih korekcija."); return; }
+  if (!confirm("Želiš li vratiti sve ručne korekcije na automatske vrijednosti?")) return;
+  for (const key of Object.keys(corrections)) delete corrections[key];
+  for (const key of Object.keys(manualComments)) delete manualComments[key];
+  if ($("showManualOnly")) $("showManualOnly").checked = false;
+  calculate();
+  scheduleSave?.();
+  showCopyMessage("Sve ručne korekcije su vraćene.");
+}
+
+function syncPlantOptions() {
+  const request = ($("requestType")?.value || "").trim();
+  const plant = $("plant");
+  if (!plant) return;
+
+  const previousValue = plant.value;
+  let options = [];
+  let defaultValue = "";
+
+  // POSEBNO PRAVILO: kod povećanja snage elektrane polje MORA biti aktivno
+  // i korisnik mora moći odabrati DA ili Postojeći NN priključak.
+  if (request === "Povećanje snage elektrane") {
+    plant.disabled = false;
+    options = [
+      ["", "— bez odabira —"],
+      ["DA", "DA"],
+      ["Postojeći NN priključak", "Postojeći NN priključak"]
+    ];
+  } else if (request === "Kupac s vlastitom proizvodnjom") {
+    plant.disabled = false;
+    options = [
+      ["", "— bez odabira —"],
+      ["DA", "DA"],
+      ["Postojeći NN priključak", "Postojeći NN priključak"]
+    ];
+  } else if (request === "Kupac s vlastitom proizvodnjom i baterijskim spremnikom energije") {
+    plant.disabled = false;
+    options = [
+      ["", "— bez odabira —"],
+      ["KSVP s baterijom bez izoliranog pogona", "KSVP s baterijom bez izoliranog pogona"],
+      ["KSVP s baterijom za izolirani pogon", "KSVP s baterijom za izolirani pogon"]
+    ];
+  } else {
+    // Za sve ostale vrste zahtjeva status elektrane nije primjenjiv.
+    plant.disabled = true;
+    options = [["__NA__", "- nije primjenjivo -"]];
+    defaultValue = "__NA__";
+  }
+
+  plant.innerHTML = "";
+  for (const [value, text] of options) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = text;
+    plant.appendChild(option);
+  }
+
+  const allowedValues = options.map(([value]) => value);
+  plant.value = allowedValues.includes(previousValue) ? previousValue : defaultValue;
+}
+function validateLogicalCombination() {
+  const warnings = [];
+  const type = $("connectionType")?.value || "";
+  const cabinet = $("cabinet")?.value || "";
+  const cable1 = num($("cable1")?.value);
+  const cable2 = num($("cable2")?.value);
+  const validationCtx = makeContext(getState());
+  const standardCabinetOMMCount = validationCtx.standardCabinetOMMCount;
+  const cabinetStatus = getCabinetStatus(validationCtx);
+  const request = $("requestType")?.value || "";
+  const plant = $("plant")?.value || "";
+
+  if (request === "Kupac s vlastitom proizvodnjom" && !["DA", "Postojeći NN priključak"].includes(plant))
+    warnings.push("Za Kupca s vlastitom proizvodnjom elektrana / status priključka mora biti DA ili Postojeći NN priključak.");
+  if (request === "Kupac s vlastitom proizvodnjom i baterijskim spremnikom energije" && !["KSVP s baterijom bez izoliranog pogona", "KSVP s baterijom za izolirani pogon"].includes(plant))
+    warnings.push("Za Kupca s vlastitom proizvodnjom i baterijskim spremnikom energije elektrana / status priključka mora biti KSVP s baterijom bez izoliranog pogona ili KSVP s baterijom za izolirani pogon.");
+
+  if (type === "Nadzemni" && (cabinet === "SKPMO" || cabinet === "SKRO"))
+    warnings.push("Kod nadzemnog priključka vrsta ormara može biti samo KPMO ili KRO.");
+  if (type === "Nadzemni" && cable1 <= 0)
+    warnings.push("Za nadzemni priključak nije unesena duljina nadzemnog kabela.");
+  if (type === "Nadzemni" && cable2 > 0)
+    warnings.push("Nadzemni priključak ne bi trebao imati podzemni kabel.");
+  if (type === "Podzemni" && cable2 <= 0)
+    warnings.push("Za podzemni priključak nije unesena duljina podzemnog kabela.");
+  if (type === "Podzemni" && cable1 > 0)
+    warnings.push("Podzemni priključak ne bi trebao imati nadzemni kabel.");
+  if (type === "Nadzemni-Podzemni") {
+    if (cable1 <= 0) warnings.push("Za nadzemni → podzemni priključak nije unesena duljina nadzemnog kabela.");
+    if (cable2 <= 0) warnings.push("Za nadzemni → podzemni priključak nije unesena duljina podzemnog kabela.");
+  }
+  if (standardCabinetOMMCount === 2 && cabinet === "KPMO" && !cabinetStatus.startsWith("KPMO 2"))
+    warnings.push("Za 2 OMM-a bez zasebnog SPMO-a KPMO treba biti KPMO 2.");
+  if (standardCabinetOMMCount > 2 && cabinet === "KPMO" && !cabinetStatus.startsWith("KPMO 3"))
+    warnings.push("Za više od 2 OMM-a bez zasebnog SPMO-a KPMO treba biti KPMO 3.");
+  if (standardCabinetOMMCount === 2 && cabinet === "SKPMO" && !cabinetStatus.startsWith("SKPMO 2"))
+    warnings.push("Za 2 OMM-a bez zasebnog SPMO-a SKPMO treba biti SKPMO 2.");
+  if (standardCabinetOMMCount > 2 && cabinet === "SKPMO" && !cabinetStatus.startsWith("SKPMO 3"))
+    warnings.push("Za više od 2 OMM-a bez zasebnog SPMO-a SKPMO treba biti SKPMO 3.");
+
+  const ommsAbove100A = validationCtx.omms.filter(omm => omm.power > 69);
+  if (ommsAbove100A.length) {
+    const names = ommsAbove100A.map((omm, index) => omm.name || `OMM ${index + 1}`).join(", ");
+    warnings.push(`${names}: snaga iznad 69 kW prelazi automatski raspon do 100 A. Odaberi odgovarajući veći osigurač ručno.`);
+  }
+
+  const box = $("logicWarnings");
+  if (box) {
+    box.style.display = warnings.length ? "block" : "none";
+    box.innerHTML = warnings.length ? "<strong>Provjeri podatke priključka:</strong><ul>" +
+      warnings.map(w => "<li>" + escapeHtml(w) + "</li>").join("") + "</ul>" : "";
+  }
+  return warnings;
+}
+
+function setManualComment(input) {
+  const row = Number(input.dataset.row);
+  const value = String(input.value || "").trim();
+
+  if (value) manualComments[row] = value;
+  else delete manualComments[row];
+
+  scheduleSave();
+}
+
+function applyPriceVisibility() {
+  const hidden = !!$("hidePrices")?.checked;
+  document.body.classList.toggle("hide-prices", hidden);
+}
+
+function setCorrection(input) {
+  const row = Number(input.dataset.row);
+  const raw = String(input.value ?? "").trim();
+
+  if (raw === "") {
+    delete corrections[row];
+    delete manualComments[row];
+  } else {
+    corrections[row] = num(raw);
+  }
+
+  calculate();
+}
+
+function stepManualQty(row, delta) {
+  pushUndoState?.();
+
+  const item = ITEMS.find(x => x.row === row);
+  const isExcavation = item && ["3502010070", "3502010120"].includes(item.code);
+  const hasManual = Object.prototype.hasOwnProperty.call(corrections, row);
+
+  if (isExcavation) {
+    // Kod iskopa ručna vrijednost je broj dužnih metara.
+    const currentMetres = hasManual
+      ? num(corrections[row])
+      : num(results[row]?.auto ?? 0);
+    corrections[row] = Math.max(0, currentMetres + delta);
+  } else {
+    const current = hasManual
+      ? num(corrections[row])
+      : num(results[row]?.final ?? results[row]?.auto ?? 0);
+    corrections[row] = Math.max(0, current + delta);
+  }
+
+  calculate();
+}
+
+let draggedOMMRow = null;
+let ommDragStartState = null;
+
+function getOMMNameSuggestions(input = null) {
+  const requestType = $("requestType")?.value || "";
+  const plant = $("plant")?.value || "";
+  const category = input?.closest("tr")?.querySelector(".ommCategory")?.value || "Kućanstvo";
+
+  if (requestType === "Kupac s vlastitom proizvodnjom i baterijskim spremnikom energije") {
+    if (plant === "KSVP s baterijom bez izoliranog pogona") {
+      return ["Stambeni objekt s FNE i baterijom bez izoliranog pogona"];
+    }
+    if (plant === "KSVP s baterijom za izolirani pogon") {
+      return ["Stambeni objekt s elektranom i baterijom za izolirani pogon"];
+    }
+    return [
+      "Stambeni objekt s FNE i baterijom bez izoliranog pogona",
+      "Stambeni objekt s elektranom i baterijom za izolirani pogon"
+    ];
+  }
+
+  if (requestType === "Kupac s vlastitom proizvodnjom") {
+    return [
+      "Stambeni objekt s FNE",
+      "Stambena građevina s elektranom",
+      "Poslovni objekt s FNE"
+    ];
+  }
+
+  if (category === "Poduzetništvo") {
+    return [
+      "Poslovna građevina",
+      "Poslovni prostor",
+      "Radionica",
+      "Skladište",
+      "Poljoprivredni objekt"
+    ];
+  }
+
+  if (category === "Elektrana") {
+    return [
+      "Fotonaponska elektrana",
+      "Sunčana elektrana",
+      "Elektrana"
+    ];
+  }
+
+  const suggestions = [
+    "Stambena građevina",
+    "Stan",
+    "Kuća za odmor",
+    "Garaža",
+    "Zajednička potrošnja"
+  ];
+
+  if (requestType === "Gradilišni priključak") suggestions.unshift("Gradilište");
+  if (requestType === "Privremeni priključak") suggestions.unshift("Privremeni priključak");
+
+  return suggestions;
+}
+
+function updateOMMNameSuggestions(input = null) {
+  const list = $("ommNameSuggestions");
+  if (!list) return;
+
+  const activeInput = input?.classList?.contains("ommName")
+    ? input
+    : document.querySelector("#ommBody .ommName");
+  const suggestions = getOMMNameSuggestions(activeInput);
+
+  list.innerHTML = suggestions
+    .map(value => `<option value="${escapeHtml(value)}"></option>`)
+    .join("");
+
+  document.querySelectorAll("#ommBody .ommName").forEach(field => {
+    const firstSuggestion = getOMMNameSuggestions(field)[0] || "Naziv OMM";
+    field.placeholder = `Prijedlog: ${firstSuggestion}`;
+  });
+}
+
+function addOMM(power = "", category = "Kućanstvo", existing = false, name = "", insertAfterRow = null) {
+  const body = $("ommBody");
+  if (!restoringState && !historySuspended) pushUndoState();
+
+  if (body.children.length >= MAX_OMM) {
+    alert(`Moguće je dodati najviše ${MAX_OMM} OMM-ova.`);
+    return;
+  }
+
+  const tr = document.createElement("tr");
+  tr.setAttribute("ondragover", "dragOverOMM(event)");
+  tr.setAttribute("ondrop", "dropOMM(event)");
+  tr.innerHTML = `
+    <td class="ommIndexCell">
+      <span class="omm-drag-handle no-print" draggable="true" role="button" tabindex="0" title="Povuci za promjenu redoslijeda" aria-label="Povuci za promjenu redoslijeda" ondragstart="startOMMDrag(event)" ondragend="endOMMDrag(event)">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+      </span>
+      <span class="ommIndex"></span>
+    </td>
+    <td>
+      <input
+        class="num ommName"
+        type="text"
+        list="ommNameSuggestions"
+        autocomplete="off"
+        value="${escapeHtml(name)}"
+        placeholder="Naziv OMM"
+        title="Odaberi prijedlog ili upiši vlastiti naziv OMM-a"
+        onfocus="updateOMMNameSuggestions(this)"
+        oninput="calculate()"
+      >
+    </td>
+    <td>
+      <input
+        class="num ommPower decimal-input"
+        type="text"
+        list="ommPowerSuggestions"
+        inputmode="decimal"
+        lang="hr"
+        value="${escapeHtml(String(power).replace(".", ","))}"
+        placeholder="Odaberi ili upiši snagu"
+        title="Odaberi tipsku snagu ili upiši vlastitu snagu"
+        oninput="normalizeDecimalInput(this); validateOMMPower(this); calculate()"
+      >
+      <div class="omm-warning">Unesi snagu veću od 0</div>
+    </td>
+    <td>
+      <select class="ommCategory" onchange="updateOMMNameSuggestions(this.closest('tr').querySelector('.ommName')); calculate()">
+        <option ${category === "Kućanstvo" ? "selected" : ""}>Kućanstvo</option>
+        <option ${category === "Poduzetništvo" ? "selected" : ""}>Poduzetništvo</option>
+        <option ${category === "Elektrana" ? "selected" : ""}>Elektrana</option>
+      </select>
+    </td>
+    <td style="text-align:center">
+      <input class="ommExisting" type="checkbox" onchange="calculate()">
+    </td>
+    <td class="no-print">
+      <div class="omm-actions">
+        <button class="omm-icon-btn omm-copy-btn" type="button" onclick="copyOMM(this)" title="Kopiraj OMM" aria-label="Kopiraj OMM">⧉</button>
+        <button class="removeOmm omm-icon-btn omm-delete-btn" type="button" onclick="removeOMM(this)" title="Obriši OMM" aria-label="Obriši OMM">×</button>
+      </div>
+    </td>
+  `;
+
+  if (insertAfterRow?.parentElement === body) insertAfterRow.after(tr);
+  else body.appendChild(tr);
+  renumberOMM();
+
+  tr.querySelector(".ommExisting").checked = !!existing;
+
+  const powerInput = tr.querySelector(".ommPower");
+  validateOMMPower(powerInput);
+  updateOMMNameSuggestions(tr.querySelector(".ommName"));
+
+  calculate();
+}
+
+function startOMMDrag(event) {
+  const row = event.currentTarget.closest("tr");
+  if (!row) return;
+
+  draggedOMMRow = row;
+  ommDragStartState = cloneState(collectAppState());
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", "omm-row");
+
+  requestAnimationFrame(() => row.classList.add("omm-dragging"));
+}
+
+function dragOverOMM(event) {
+  if (!draggedOMMRow) return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+
+  const targetRow = event.currentTarget;
+  if (!targetRow || targetRow === draggedOMMRow) return;
+
+  const rect = targetRow.getBoundingClientRect();
+  const placeAfter = event.clientY > rect.top + rect.height / 2;
+  const referenceNode = placeAfter ? targetRow.nextElementSibling : targetRow;
+  targetRow.parentElement.insertBefore(draggedOMMRow, referenceNode);
+  renumberOMM();
+}
+
+function dropOMM(event) {
+  if (!draggedOMMRow) return;
+  event.preventDefault();
+  event.stopPropagation();
+  finishOMMDrag();
+}
+
+function endOMMDrag() {
+  finishOMMDrag();
+}
+
+function finishOMMDrag() {
+  if (!draggedOMMRow) return;
+
+  const movedRow = draggedOMMRow;
+  const before = ommDragStartState;
+  draggedOMMRow = null;
+  ommDragStartState = null;
+
+  movedRow.classList.remove("omm-dragging");
+  renumberOMM();
+
+  const after = collectAppState();
+  if (before && stateSignature(before) !== stateSignature(after)) {
+    pushUndoState(before);
+  }
+
+  calculate();
+}
+
+function copyOMM(button) {
+  const row = button.closest("tr");
+  if (!row) return;
+
+  addOMM(
+    row.querySelector(".ommPower")?.value || "",
+    row.querySelector(".ommCategory")?.value || "Kućanstvo",
+    !!row.querySelector(".ommExisting")?.checked,
+    row.querySelector(".ommName")?.value || "",
+    row
+  );
+}
+
+function removeOMM(button) {
+  pushUndoState();
+  button.closest("tr").remove();
+  renumberOMM();
+  calculate();
+}
+
+function renumberOMM() {
+  [...document.querySelectorAll("#ommBody tr")].forEach((row, index) => {
+    row.querySelector(".ommIndex").textContent = index + 1;
+  });
+}
+
+function getActiveCode(code) {
+  return ITEMS.some(item =>
+    item.code === code &&
+    Math.abs(results[item.row]?.final ?? 0) > 0.000001
+  );
+}
+
+function getSelectedCableText(ctx) {
+  if (getActiveCode("0505010010")) return "SKS 2x16 mm²";
+  if (getActiveCode("0505010020")) return "SKS 4x16 mm²";
+  if (getActiveCode("0505010025")) return "SKS 4x25 mm²";
+  if (getActiveCode("0504020170")) return "XP00-A 4x150 mm²";
+  if (getActiveCode("0504020150")) return "XP00-A 4x50 mm²";
+  if (getActiveCode("0504020140")) return "XP00-A 4x25 mm²";
+  return "";
+}
+
+function getOverheadCableText() {
+  if (getActiveCode("0505010010")) return "SKS 2x16 mm²";
+  if (getActiveCode("0505010020")) return "SKS 4x16 mm²";
+  if (getActiveCode("0505010025")) return "SKS 4x25 mm²";
+  return "";
+}
+
+function getUndergroundCableText() {
+  if (getActiveCode("0504020170")) return "XP00-A 4x150 mm²";
+  if (getActiveCode("0504020150")) return "XP00-A 4x50 mm²";
+  if (getActiveCode("0504020140")) return "XP00-A 4x25 mm²";
+  return "";
+}
+
+function updateCabinetLocationOptions(preferredValue = null) {
+  const select = $("cabinetLocation");
+  if (!select) return;
+
+  const ctx = makeContext(getState());
+  const current = preferredValue !== null ? preferredValue : select.value;
+  const options = [];
+
+  // KPMO je uvijek na fasadi građevine.
+  if (ctx.cabinet === "KPMO") {
+    options.push(["fasada", "Na fasadi građevine"]);
+  }
+
+  // SKPMO može biti uz stup NN mreže ili na parceli podnositelja zahtjeva.
+  else if (ctx.cabinet === "SKPMO") {
+    options.push(["uz-stup", "Kraj stupa NN mreže"]);
+    options.push(["parcela", "Na rubu parcele"]);
+
+    // Ako postoji međustup, SKPMO može biti i uz međustup.
+    if (ctx.intermediate) {
+      options.push(["uz-medustup", "Pokraj međustupa"]);
+    }
+  }
+
+  // Za ostale stvarno odabrane ormare ostavi opće lokacije.
+  else if (["KPO", "KRO", "SKRO"].includes(ctx.cabinet)) {
+    options.push(["fasada", "Na fasadi građevine"]);
+    options.push(["parcela", "Na parceli podnositelja zahtjeva"]);
+    if (ctx.intermediate) options.push(["uz-medustup", "Uz međustup"]);
+  }
+
+  // Bez odabranog ormara ne smije se automatski pretpostaviti fasada.
+  else {
+    options.push(["", "— nije primjenjivo —"]);
+  }
+
+  select.innerHTML = options
+    .map(([value, label]) => `<option value="${value}">${label}</option>`)
+    .join("");
+
+  const allowed = options.map(o => o[0]);
+
+  if (allowed.includes(current)) {
+    select.value = current;
+  } else if (ctx.cabinet === "KPMO") {
+    select.value = "fasada";
+  } else {
+    select.value = options[0]?.[0] || "";
+  }
+}
+
+function getCabinetText(ctx) {
+  const location = $("cabinetLocation")?.value || "";
+
+  let placement = "";
+  if (location === "fasada") placement = "smještenog na vanjskom zidu građevine";
+  else if (location === "parcela") placement = "smještenog na rubu parcele podnositelja zahtjeva";
+  else if (location === "uz-stup") placement = "smještenog kraj stupa NN mreže";
+  else if (location === "uz-medustup") placement = "smještenog pokraj međustupa";
+
+  if (ctx.spmoOMMCount > 0 && ctx.standardCabinetOMMCount === 0) {
+    return `do samostojećeg priključno-mjernog ormara (SPMO-a) s ugrađenim SMT-om ${placement}`.trim();
+  }
+
+  // Vrsta ormara iz podataka o priključku ima prednost nad time
+  // postoji li odgovarajuća stavka ormara u troškovniku.
+  if (ctx.cabinet === "KPMO") {
+    return `do kućnog priključno-mjernog ormara (KPMO-a) ${placement || "smještenog na vanjskom zidu građevine"}`.trim();
+  }
+
+  if (ctx.cabinet === "SKPMO") {
+    return `do samostojećeg kućnog priključno-mjernog ormara (SKPMO-a) ${placement}`.trim();
+  }
+
+  if (ctx.cabinet === "KPO") {
+    return `do kabelskog priključnog ormara (KPO) ${placement}`.trim();
+  }
+
+  if (ctx.cabinet === "SKRO") {
+    return `do samostojećeg kabelskog razdjelnog ormara (SKRO-a) ${placement}`.trim();
+  }
+
+  if (ctx.cabinet === "KRO") {
+    return `do kabelskog razdjelnog ormara (KRO-a) ${placement}`.trim();
+  }
+
+  return placement ? `do priključnog ormara ${placement}` : "do priključnog ormara";
+}
+
+// ==================== OPIS PRIKLJUČKA ====================
+function generateConnectionDescription() {
+  const ctx = makeContext(getState());
+
+  // V115 — povećanje priključne snage bez ikakvih radova na priključku:
+  // nema vrste priključka, ormara, međustupa ni kabela -> samo parametriranje brojila.
+  const noPhysicalConnectionWorks =
+    !ctx.type &&
+    !ctx.cabinet &&
+    !ctx.intermediate &&
+    ctx.cable1 <= 0 &&
+    ctx.cable2 <= 0;
+
+  // V141 — Kupac s vlastitom proizvodnjom i/ili baterijom bez odabranih
+  // podataka o priključku koristi kratki opis postojećeg NN priključka.
+  const isOwnProductionRequest = [
+    "Kupac s vlastitom proizvodnjom",
+    "Kupac s vlastitom proizvodnjom i baterijskim spremnikom energije"
+  ].includes(ctx.requestType);
+
+  if (isOwnProductionRequest && noPhysicalConnectionWorks) {
+    $("connectionDescription").value = "Postojeći NN priključak. Parametrirati brojilo.";
+    scheduleSave?.();
+    return;
+  }
+
+  // Dugi opis određuje samo glavna konfiguracija priključka. Faznost, kilometri,
+  // OMM kategorija i donja pomoćna polja ne smiju blokirati ovo pravilo.
+  const emptyKsvpConnection =
+    ctx.requestType === "Kupac s vlastitom proizvodnjom" &&
+    ["DA", "Postojeći NN priključak"].includes(ctx.plant) &&
+    noPhysicalConnectionWorks;
+
+  if (emptyKsvpConnection) {
+    $("connectionDescription").value = "Postojeći NN priključak. Ukoliko se brojilo nalazi unutar objekta, potrebno je njegovo izmještanje u kućni priključno-mjerni ormarić (KPMO), koji se ugrađuje na fasadu objekta, na prikladnom i pristupačnom mjestu koje određuje HEP ODS. Korisnik je suglasan da se prilikom izvođenja radova KPMO i priključni kabel mogu urezati u fasadu objekta. U slučaju da KPMO već postoji, izvodi se samo zamjena postojećeg brojila, bez potrebe za dodatnim izmještanjem.";
+    scheduleSave?.();
+    return;
+  }
+
+  // U ostalim slučajevima status postojećeg NN priključka koristi kratki opis.
+  if (ctx.plant === "Postojeći NN priključak") {
+    $("connectionDescription").value = "Postojeći NN priključak. Parametrirati brojilo.";
+    scheduleSave?.();
+    return;
+  }
+
+  if (
+    ctx.requestType === "Povećanje priključne snage" &&
+    ctx.plant === "NE" &&
+    noPhysicalConnectionWorks
+  ) {
+    $("connectionDescription").value = "Postojeći NN priključak. Parametrirati brojilo.";
+    scheduleSave?.();
+    return;
+  }
+
+  const type = ctx.type;
+  const cabinetText = getCabinetText(ctx);
+  const overheadCable = getOverheadCableText();
+  const undergroundCable = getUndergroundCableText();
+  const intermediate = ctx.intermediate;
+  const isNewIntermediate = ["SD", "SB 315/10", "SB 650/10"].includes(intermediate);
+  const isExistingIntermediate = intermediate === "Postojeći međustup";
+  const meterRelocation = $("meterRelocation")?.value;
+  const propertyRights = $("propertyRights")?.value;
+
+  const parts = [];
+
+  if (type === "Nadzemni") {
+    const cable = overheadCable || "odgovarajućim tipiziranim kabelom";
+
+    if (isNewIntermediate) {
+      parts.push(`Priključak izvesti tipiziranim kabelom ${cable} od stupa NN mreže preko novopostavljenog međustupa u parceli podnositelja zahtjeva ${cabinetText}, nacrt u prilogu.`);
+    } else if (isExistingIntermediate) {
+      parts.push(`Priključak izvesti tipiziranim kabelom ${cable} od stupa NN mreže preko postojećeg međustupa u parceli podnositelja zahtjeva ${cabinetText}, nacrt u prilogu.`);
+    } else {
+      parts.push(`Priključak izvesti tipiziranim kabelom ${cable} od stupa NN mreže ${cabinetText}, nacrt u prilogu.`);
+    }
+  }
+
+  else if (type === "Podzemni") {
+    const cable = undergroundCable || "XP00-A 4x25 mm²";
+
+    if (isNewIntermediate) {
+      parts.push(`Priključak izvesti tipiziranim kabelom ${cable} od stupa NN mreže preko novopostavljenog međustupa u parceli podnositelja zahtjeva ${cabinetText}, nacrt u prilogu.`);
+    } else if (isExistingIntermediate) {
+      parts.push(`Priključak izvesti tipiziranim kabelom ${cable} od stupa NN mreže preko postojećeg međustupa u parceli podnositelja zahtjeva ${cabinetText}, nacrt u prilogu.`);
+    } else {
+      parts.push(`Priključak izvesti tipiziranim kabelom ${cable} od stupa NN mreže ${cabinetText}, nacrt u prilogu.`);
+    }
+  }
+
+  else if (type === "Nadzemni-Podzemni") {
+    const cable2 = undergroundCable || "XP00-A 4x25 mm²";
+
+    // Ako nema nadzemnog kabela, opisuje se samo podzemni dio priključka.
+    if (ctx.cable1 <= 0) {
+      if (isExistingIntermediate) {
+        parts.push(`Priključak izvesti tipiziranim kabelom ${cable2} od postojećeg međustupa ${cabinetText}, nacrt u prilogu.`);
+      } else {
+        parts.push(`Priključak izvesti tipiziranim kabelom ${cable2} od stupa NN mreže ${cabinetText}, nacrt u prilogu.`);
+      }
+    } else {
+      const cable1 = overheadCable || "SKS 4x16 mm²";
+
+      if (isExistingIntermediate) {
+        parts.push(`Priključak izvesti tipiziranim kabelom ${cable1} od stupa NN mreže do postojećeg međustupa u parceli podnositelja zahtjeva. Tipiziranim kabelom ${cable2} od postojećeg međustupa ${cabinetText}, nacrt u prilogu.`);
+      } else {
+        parts.push(`Priključak izvesti tipiziranim kabelom ${cable1} od stupa NN mreže do novopostavljenog međustupa u parceli podnositelja zahtjeva. Tipiziranim kabelom ${cable2} od međustupa ${cabinetText}, nacrt u prilogu.`);
+      }
+    }
+  }
+
+  if (ctx.spmoOMMCount > 0 && ctx.standardCabinetOMMCount > 0) {
+    parts.push(ctx.spmoOMMCount === 1
+      ? "Za OMM snage veće od 50 kW predvidjeti zaseban SPMO s ugrađenim SMT-om."
+      : `Za OMM-e snage veće od 50 kW predvidjeti ${ctx.spmoOMMCount} zasebna SPMO-a s ugrađenim SMT-om.`);
+  }
+
+  if (meterRelocation === "DA") {
+    if (ctx.spmoOMMCount > 0 && ctx.standardCabinetOMMCount === 0) {
+      parts.push("Potrebno je izmještanje brojila iz objekta u SPMO s ugrađenim SMT-om.");
+    } else if (ctx.cabinet === "KPMO") {
+      parts.push("Potrebno je izmještanje brojila iz objekta u KPMO.");
+    } else if (ctx.cabinet === "SKPMO") {
+      parts.push("Potrebno je izmještanje brojila iz objekta u SKPMO.");
+    }
+  }
+
+  if (ctx.cabinet === "KPMO" && ctx.standardCabinetOMMCount > 0) {
+    parts.push("Investitor dopušta urezivanje kanala za kabel po fasadi građevine.");
+  }
+
+  if (propertyRights === "DA") {
+    parts.push("Prije izgradnje priključka potrebno je riješiti imovinsko-pravne odnose s vlasnicima čestica na kojima će biti položen kabel.");
+  }
+
+  const combinedWithoutOverhead =
+    type === "Nadzemni-Podzemni" && ctx.cable1 <= 0 && ctx.cabinet === "SKPMO";
+
+  if (
+    !combinedWithoutOverhead &&
+    (
+      $("cabinetLocation")?.value === "fasada" ||
+      $("cabinetLocation")?.value === "uz-medustup" ||
+      $("cabinetLocation")?.value === "parcela"
+    )
+  ) {
+    parts.push("Prije izvođenja radova kontaktirati investitora oko položaja lokacije ormara.");
+  }
+
+  if (
+    !combinedWithoutOverhead &&
+    isNewIntermediate
+  ) {
+    parts.push("Prije izvođenja radova obavezno kontaktirati investitora oko položaja lokacije međustupa.");
+  }
+
+  if (ctx.cabinet === "KRO") {
+    parts.push("Investitor dopušta urezivanje kanala za kabel po fasadi građevine.");
+  }
+
+  // SKRO i KRO označavaju priključak zgrade s investitorovim ormarima za brojila.
+  if (ctx.cabinet === "SKRO" || ctx.cabinet === "KRO") {
+    parts.push("Investitor samostalno dobavlja i ugrađuje ormare za smještaj brojila.");
+  }
+  parts.push("Investitor je dužan izvesti glavni vod te dostaviti potvrdu o uporabljivosti električne instalacije.");
+
+  $("connectionDescription").value = parts.join(" ");
+  scheduleSave?.();
+}
+
+async function copyConnectionDescription() {
+  const text = $("connectionDescription").value.trim();
+  if (!text) {
+    alert("Opis priključka je prazan.");
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    showCopyMessage("Opis priključka je kopiran.");
+  } catch (e) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+    showCopyMessage("Opis priključka je kopiran.");
+  }
+}
+
+const SPECIAL_CONDITIONS_TEXT = `1. Prilikom izvođenja radova ne smije se oštetiti: elektroenergetski kabel ili vod, TK kanalizacija, elektroenergetski objekt ili postrojenje (u daljnjem tekstu: distribucijska elektroenergetska mreža) u nadležnosti HEP ODS-a. Na lokaciji Građevine nalazi se podzemna i/ili nadzemna distribucijska elektroenergetska mreža niskonaponske i srednjenaponske razine.
+2. Za eliminiranje međusobnih utjecaja i oštećenja kod križanja, paralelnog polaganja te približavanja instalacija ili objekata predmetne Građevine sa distribucijskom elektroenergetskom mrežom u nadležnosti HEP ODS-a, potrebno je  postići horizontalnu i/ili vertikalnu udaljenost instalacija ili objekata predmetne Građevine u odnosu na postojeću distribucijsku elektroenergetsku mrežu prisutnu na lokaciji Građevine.
+Navedeno mora biti u skladu s odredbama posebnih zakona, propisa, normi, pravila struke i internih tehničkih akata HEP ODS-a. Potrebno se pridržavati sigurnosnih visina i udaljenosti od distribucijske elektroenergetske mreže prema Pravilniku o tehničkim normativima za izgradnju nadzemnih elektroenergetskih vodova nazivnog napona od 1 kV do 400 kV (SL broj 65/88 i NN broj 24/97).
+Posebno obratiti pozornost na biltene HEP vjesnika broj 118 i broj 130 te članak 181. iz Mrežnih pravila distribucijskog sustava  (NN 74/2018).
+3. Polaganje instalacija ili gradnja objekata iznad ili ispod distribucijske elektroenergetske mreže u nadležnosti HEP ODS-a nije dozvoljena izuzev križanja instalacija ili objekata.
+4. Izvođač radova dužan je pravovremeno, a najkasnije 7 dana prije početka radova, obavijestiti HEP ODS o točnom vremenu početka i planu odvijanja radova. Prema potrebi s HEP ODS-om dogovoriti operativni plan izgradnje s obzirom na uklopno stanje elektroenergetske mreže (zbog eventualnih najava isključenja kupaca, privremenih napajanja i sl.).
+5. Za lociranje i označavanje trasa podzemnog dijela distribucijske elektroenergetske mreže, ukoliko ih ima na traženoj mikrolokaciji, potrebno je pravovremeno, a najkasnije 7 dana prije početka radova, podnijeti pisani zahtjev HEP ODS-u ili poslati presliku zahtjeva na službeni e-mail Elektre Bjelovar (info.dpbjelovar).
+U zahtjevu je potrebno navesti podatke o  Građevini, oznaku glavnog projekta i posebnih uvjeta izdanih od strane HEP ODS-a. O lociranju je potrebno sastaviti zapisnik u kojem izvođač radova potvrđuje da je upoznat sa trasama elektroenergetske infrastrukture i svim obavezama iz posebnih uvjeta i zakonskih propisa.
+6. Točan položaj i konačan broj podzemnog dijela distribucijske elektroenergetske mreže moguće je utvrditi isključivo odlaskom na teren i to lociranjem i/ili probnim iskopima (uz prisutnost predstavnika HEP ODS-a), a nadzemne dijelove distribucijske elektroenergetske mreže uvidom na terenu i/ili iz geodetske snimke unutar projekta Građevine.
+Prikaz postojeće i planirane distribucijske elektroenergetske mreže iz privitka prikazuje okvirni položaj navedene mreže (nije geodetska snimka i ne prikazuje konačan broj postojeće distribucijske elektroenergetske mreže).
+7. Investitor je obvezan upoznati izvođače radova s propisanim uvjetima izvođenja radova u blizini distribucijske elektroenergetske mreže. Posebno obratiti pozornost na pravila iz biltena HEP vjesnika broj 496: Pravila i mjere sigurnosti pri radu na električnim postrojenjima.
+8. Sve radove na iskopu rova u blizini distribucijske elektroenergetske mreže treba izvoditi isključivo ručno uz maksimalno povećanu pozornost.
+9. Svaku nepredviđenu okolnost koja bi mogla nastati i dovesti do oštećenja, kao i sva nastala oštećenja distribucijske elektroenergetske mreže, Investitor je dužan odmah prijaviti HEP ODS-u. Za eventualna oštećenja odgovoran je Investitor. Nakon sanacije oštećenja, HEP ODS će izdati račun Investitoru za nastalu štetu.
+10. Izvođač radova ne može zatrpati mjesto križanja ili približavanja predmetnih instalacija ili objekata Građevine sa distribucijskom elektroenergetskom mrežom, prije nego pravovremeno, a najkasnije 2 dana ranije, pozove predstavnika  HEP ODS-a koji će pregledati stanje iste, te sastaviti zapisnik.
+11. Za sve radove u blizini distribucijske elektroenergetske mreže u nadležnosti HEP ODS-a, mora se omogućiti stalan uvid i nadzor nad radovima s mogućnošću upisa svih nalaza u građevinski dnevnik.
+12. Ovi posebni uvjeti i prikaz postojeće i planirane distribucijske elektroenergetske mreže na lokaciji Građevine moraju biti sastavni dio glavnog projekta. Glavni projekt uz navedeno mora minimalno sadržavati tehnički opis izvođenja radova u blizini distribucijske elektroenergetske mreže i detaljne nacrte vođenja i/ili križanja distribucijske elektroenergetske mreže s Građevinom. Projektant je odgovoran da je glavni projekt Građevine usklađen s posebnim uvjetima HEP ODS-a.
+13. U slučaju neizbježnog premještanja distribucijske elektroenergetske mreže u nadležnosti HEP ODS-a, potrebno je pravovremeno s HEP ODS-om dogovoriti optimalno rješenje za koje je potrebno ishoditi potrebnu dokumentaciju. Troškove ishođenja dokumentacije za gradnju i trošak izvođenja kompletnog zahvata, snosi Investitor. Kod zahvata koji zahtijevaju ishođenje građevinske dozvole, vrijeme zahvata je minimalno 1 godina.
+14. Ovi posebni uvjeti za predmetni zahvat u prostoru vrijede 2 godine od datuma izdavanja ili duže ukoliko u međuvremenu nisu nastale izmjene u distribucijskoj elektroenergetskoj mreži na lokaciji Građevine.
+15. Dodatne podatke (interne tehničke akte HEP ODS-a i/ili podloge u digitalnom obliku) možete zatražiti na službeni e-mail Elektre Bjelovar (info.dpbjelovar).`;
+
+function ensureSpecialConditions() {
+  if (!$("specialConditions")) return;
+  const source = $("specialConditions").value.trim() ? $("specialConditions").value : SPECIAL_CONDITIONS_TEXT;
+  $("specialConditions").value = source
+    .replace(/\r/g, "")
+    .split("\n")
+    .filter(line => line.trim() !== "")
+    .join("\n");
+}
+
+async function copySpecialConditions() {
+  const text = $("specialConditions")?.value.trim() || "";
+  if (!text) { alert("Posebni uvjeti su prazni."); return; }
+  try {
+    await navigator.clipboard.writeText(text);
+    showCopyMessage("Posebni uvjeti su kopirani.");
+  } catch (e) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text; textarea.style.position = "fixed"; textarea.style.left = "-9999px";
+    document.body.appendChild(textarea); textarea.select(); document.execCommand("copy"); textarea.remove();
+    showCopyMessage("Posebni uvjeti su kopirani.");
+  }
+}
+
+function generateAdditionalConditions() {
+  const requestType = $("requestType")?.value || "";
+  const needsAdditionalConditions = requestType === "Povećanje snage elektrane" ||
+                                    requestType === "Kupac s vlastitom proizvodnjom" ||
+                                    requestType === "Kupac s vlastitom proizvodnjom i baterijskim spremnikom energije";
+
+  const text = needsAdditionalConditions ? `Odabrati režim regulacije napona jalovom snagom Q=f(U), s postavnim vrijednostima definiranima prilogu "Postavke regulacije napona jalovom snagom proizvodnih postrojenja instalirane snage do uključivo 50 kW". 
+Korisnik mreže kao dokaz o provedenom odabiru režima rada i odabranim postavkama dostavlja potpisanu/ovjerenu „Potvrdu o parametriranju proizvodnih jedinica“.
+Određuju se parametri zaštita prema prilogu "Parametri zaštite za odvajanje proizvodnih postrojenja instalacije snage do uključivo 50 kW“.
+Korisnik mreže kao dokaz o provedenom odabiru režima rada i odabranim postavkama dostavlja potpisanu/ovjerenu „Potvrdu o parametriranju proizvodnih jedinica“.` : "";
+
+  if ($("additionalConditions")) $("additionalConditions").value = text;
+  scheduleSave();
+}
+
+async function copyAdditionalConditions() {
+  const text = $("additionalConditions")?.value.trim() || "";
+  if (!text) {
+    alert("Dodatni uvjeti su prazni.");
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    showCopyMessage("Dodatni uvjeti su kopirani.");
+  } catch (e) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+    showCopyMessage("Dodatni uvjeti su kopirani.");
+  }
+}
+
+function resetAll() {
+  pushUndoState();
+  createPreResetBackup();
+  for (const key of Object.keys(manualComments)) delete manualComments[key];
+  if ($("hidePrices")) $("hidePrices").checked = false;
+  applyPriceVisibility();
+  for (const key of Object.keys(corrections)) delete corrections[key];
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+
+  $("projectName").value = "";
+  if ($("connectionPreset")) $("connectionPreset").value = "";
+  if ($("requestType")) $("requestType").value = "";
+  $("connectionType").value = "";
+  $("phases").value = "";
+  $("cabinet").value = "";
+  $("plant").value = "";
+  $("intermediate").value = "";
+  $("km").value = "0";
+  $("cable1").value = "0";
+  $("cable2").value = "0";
+  updateCabinetLocationOptions();
+  if ($("meterRelocation")) $("meterRelocation").value = "";
+  if ($("propertyRights")) $("propertyRights").value = "NE";
+  if ($("connectionDescription")) $("connectionDescription").value = "";
+  if ($("specialConditions")) $("specialConditions").value = SPECIAL_CONDITIONS_TEXT;
+  if ($("additionalConditions")) $("additionalConditions").value = "";
+  if ($("materialSearch")) $("materialSearch").value = "";
+  $("showAll").checked = false;
+  $("showManualOnly").checked = false;
+  $("ommBody").innerHTML = "";
+
+  updateCableFields();
+  addOMM("", "Kućanstvo");
+}
+
+[
+  "connectionType",
+  "phases",
+  "cabinet",
+  "plant",
+  "intermediate",
+  "km",
+  "cable1",
+  "cable2"
+].forEach(id => $(id).addEventListener("input", calculate));
+
+// Promjena statusa priključka mora odmah osvježiti opis, čak i kada polje
+// već sadrži ranije generirani ili spremljeni tekst.
+$("plant").addEventListener("change", () => {
+  updateOMMNameSuggestions();
+  generateConnectionDescription();
+  generateAdditionalConditions();
+});
+
+// Kod elektrane DA opis prati stvarno odabrane radove na priključku.
+["connectionType", "cabinet", "intermediate", "cable1", "cable2"].forEach(id => {
+  $(id).addEventListener("change", () => {
+    if (["DA", "Postojeći NN priključak"].includes($("plant").value)) {
+      generateConnectionDescription();
+    }
+  });
+});
+
+$("projectName").addEventListener("input", scheduleSave);
+$("requestType").addEventListener("change", () => {
+  syncPlantOptions();
+  updateOMMNameSuggestions();
+  generateAdditionalConditions();
+  calculate();
+  if (["DA", "Postojeći NN priključak"].includes($("plant").value)) {
+    generateConnectionDescription();
+  }
+  scheduleSave();
+});
+$("showAll").addEventListener("change", scheduleSave);
+$("showManualOnly").addEventListener("change", scheduleSave);
+
+["cabinetLocation","meterRelocation","propertyRights"].forEach(id => {
+  $(id).addEventListener("change", () => {
+    generateConnectionDescription();
+    scheduleSave();
+  });
+});
+
+$("connectionDescription").addEventListener("input", scheduleSave);
+$("specialConditions")?.addEventListener("input", scheduleSave);
+$("additionalConditions")?.addEventListener("input", scheduleSave);
+
+refreshPresetSelect();
+refreshSavedProjectSelect();
+updateUndoButton();
+
+if (!restoreAppState()) {
+  updateCableFields();
+  addOMM("", "Kućanstvo");
+}
+
+ensureSpecialConditions();
+
+// V109 — primijeni ograničenja Elektrana / status priključka i pri prvom učitavanju.
+syncPlantOptions();
+updateOMMNameSuggestions();
+
+function toggleRequestCodebook(force){
+  const panel=document.getElementById("requestCodebookPanel");
+  if(!panel) return;
+  const open=typeof force === "boolean" ? force : !panel.classList.contains("open");
+  panel.classList.toggle("open",open);
+  panel.setAttribute("aria-hidden",open ? "false" : "true");
+}
+</script>
+
+<div id="presetFabWrap" class="preset-fab-wrap no-print">
+  <div id="presetPanel" class="preset-panel" aria-hidden="true">
+    <div class="preset-panel-head">
+      <strong>Tipski priključci</strong>
+      <button type="button" class="preset-close" onclick="togglePresetPanel(false)" title="Zatvori">×</button>
+    </div>
+    <div class="field">
+      <label>Odaberi tipski priključak</label>
+      <select id="connectionPreset" onchange="applyConnectionPreset(this.value); togglePresetPanel(false)">
+        <option value="" selected>— odaberi —</option>
+      </select>
+    </div>
+
+    <div class="preset-divider"></div>
+
+    <div class="field">
+      <label>Naziv novog tipskog priključka</label>
+      <input id="newPresetName" type="text" placeholder="npr. EES - novi · Nadzemni · 3F · KPMO">
+    </div>
+
+    <div class="preset-actions">
+      <button class="btn3" type="button" onclick="saveCurrentAsPreset()">Spremi kao tipski</button>
+      <button class="btn2" type="button" onclick="deleteSelectedPreset()">Obriši odabrani</button>
+    </div>
+
+    <button class="btn2 preset-clear" type="button" onclick="clearConnectionPreset()">Očisti tipski odabir</button>
+  </div>
+
+  <button id="presetFab" class="preset-fab" type="button"
+          onclick="togglePresetPanel()"
+          title="Tipski priključci"
+          aria-label="Tipski priključci">
+    ⚡
+  </button>
+</div>
+
+
+<div id="requestCodebookFabWrap" class="request-codebook-fab-wrap no-print">
+  <div id="requestCodebookPanel" class="request-codebook-panel" aria-hidden="true">
+    <div class="request-codebook-head">
+      <strong>Šifrarnik vrste zahtjeva</strong>
+      <button type="button" class="request-codebook-close" onclick="toggleRequestCodebook(false)" title="Zatvori">×</button>
+    </div>
+    <div class="table-wrap">
+      <table class="request-codebook-table">
+        <thead><tr><th>Vrsta zahtjeva</th><th>Obračun</th><th>Šifra / vrsta usluge</th></tr></thead>
+        <tbody>
+          <tr><td>Novi priključak</td><td>kW</td><td><strong>ZJDNPRIK - NOVI</strong> – Novi priključak</td></tr>
+          <tr><td>Premještaj postojećeg</td><td>Stvarni trošak</td><td><strong>ZJDNPRIK - PRMJ</strong> – Promjene na priključku</td></tr>
+          <tr><td>Obavijest / elektrana s baterijom bez izoliranog pogona</td><td><strong>1F: 245 € / 3F: 345 €</strong> (poduzetništvo: <strong>+ PDV</strong>)</td><td><strong>ZJDNPRIK - KVPS - PP2</strong> – do 50 kW</td></tr>
+          <tr><td>Elektrana s baterijom sa izoliranim pogonom</td><td>Stvarni trošak (kao premještaj)</td><td><strong>ZJDNPRIK - PRMJ</strong> – Promjene na priključku</td></tr>
+          <tr><td>Povećanje i izmještanje</td><td>Gleda se što je veće: kW ili stvarni trošak</td><td><strong>ZJDNPRIK - PRMJ</strong> – Promjene na priključku</td></tr>
+          <tr><td>EOTRP – u građevinskom području</td><td>kW</td><td><strong>ZEOTRP - ESL2</strong> – EOTRP ODS (PP2)</td></tr>
+          <tr><td>EOTRP – van građevinskog područja</td><td>Stvarni trošak</td><td>—</td></tr>
+          <tr><td>Stvaranje uvjeta / IPO</td><td>kW</td><td><strong>JDSL - PP2</strong> – Stvaranje uvjeta na NN / IPO</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <button id="requestCodebookFab" class="request-codebook-fab" type="button" onclick="toggleRequestCodebook()" title="Šifrarnik vrste zahtjeva" aria-label="Šifrarnik vrste zahtjeva">i</button>
+</div>
+
+<dialog id="costNotice" aria-labelledby="costNoticeTitle" aria-describedby="costNoticeDescription">
+  <div class="notice-head"><span class="notice-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M10.3 4.3 2.7 18a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/><path d="M12 9v5m0 3v.1"/></svg></span><h2 id="costNoticeTitle">Važna napomena</h2></div>
+  <div class="notice-body">
+    <div class="notice-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M10.3 4.3 2.7 18a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/><path d="M12 9v5m0 3v.1"/></svg><p id="costNoticeDescription">Izračuni i podaci prikazani u ovom troškovniku <strong>isključivo su informativne prirode</strong>. Prije službene uporabe potrebno je provjeriti <strong>unesene podatke, količine, cijene i primjenjiva pravila obračuna</strong>. Generirani troškovnik nije zamjena za provjeru i odobrenje nadležne osobe.</p></div>
+    <div class="notice-box notice-info"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><p>Potvrdom prihvaćate korištenje troškovnika uz navedenu napomenu i razumijete da <strong>prikazani izračun ne predstavlja konačan odobreni trošak priključka.</strong></p></div>
+    <label class="notice-check" for="costNoticeAccepted"><input type="checkbox" id="costNoticeAccepted" autofocus><span>Prihvaćam da sam pročitao/la i razumio/la napomenu te da su prikazani podaci isključivo informativne prirode.</span></label>
+  </div>
+  <div class="notice-footer"><button type="button" id="costNoticeConfirm" class="notice-confirm" disabled>Potvrđujem</button></div>
+</dialog>
+<script>
+(() => {
+  const acceptanceKey = 'automatski_troskovnik_notice_accepted';
+  try {
+    if (localStorage.getItem(acceptanceKey) === 'true') return;
+  } catch (e) { /* Ako pohrana nije dostupna, napomena se prikazuje. */ }
+  const notice = document.getElementById('costNotice');
+  const accepted = document.getElementById('costNoticeAccepted');
+  const confirm = document.getElementById('costNoticeConfirm');
+  accepted.checked = false;
+  confirm.disabled = true;
+  accepted.addEventListener('change', () => { confirm.disabled = !accepted.checked; });
+  notice.addEventListener('cancel', event => event.preventDefault());
+  confirm.addEventListener('click', () => {
+    if (!accepted.checked) return;
+    try { localStorage.setItem(acceptanceKey, 'true'); } catch (e) {}
+    notice.close();
+    document.body.classList.remove('cost-notice-open');
+    document.getElementById('requestType')?.focus();
+  });
+  document.body.classList.add('cost-notice-open');
+  notice.showModal();
+})();
+</script>
+
+</body>
+</html>
